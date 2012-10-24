@@ -47,11 +47,12 @@ def validateISBN10(s):
 
 class Book:
     def __init__(self, isbn, title):
+        '''has to be unicode, not utf-8'''
         self.isbn = isbn  # has to validate isbn here.
         self.title = title  #check encode !
 
-    #def __str__(self):
-    #    return 'bop' #u'ISBN: %s, title: "%s"'%(self.isbn, self.title)
+    def __str__(self):
+        raise UnicodeDecodeError
 
     def __unicode__(self):
         return u'ISBN: %s, title: "%s"'%(self.isbn, self.title)
@@ -100,10 +101,10 @@ class Book:
         r = []
         t = et.parse(xmlf)
         for found in t.xpath("/library/books/book"):
-            title = found.xpath("title")[0].text
+            title = found.xpath("title")[0].text#.decode('utf-8')
             google_id = found.xpath("id")[0].text
             url = found.xpath("url")[0].text
-            isbn = found.xpath("identifier/value")[0].text
+            isbn = found.xpath("identifier/value")[0].text#.decode('utf-8')
             b = kls(isbn, title)
             r.append(b)
         return r
