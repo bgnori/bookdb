@@ -2,6 +2,9 @@
 # coding=utf-8
 
 import lxml.etree as et
+import utf8csv
+
+
 
 googlexmlpath = {
     'id':"""/library/books/book/id""",
@@ -44,9 +47,13 @@ def validateISBN10(s):
 
 class Book:
     def __init__(self, title, contributors, isbn):
-        self.title = title 
-        self.contributors = contributors
-        self.ISBN = isbn
+        self.title = title or ''
+        self.contributors = contributors or ''
+        self.ISBN = isbn or ''
+
+
+    def tuplify(self):
+        return (self.title, self.contributors, self.ISBN)
 
     def hasValidISBN(self):
         """
@@ -56,11 +63,9 @@ class Book:
         """
         return False
 
-
-
     
     @classmethod
-    def write_csv(kls, bs, coref):
+    def write_csv(kls, bs, csvf):
         """
         seq: sequence of Book instance
         >>> from StringIO import StringIO
@@ -69,10 +74,21 @@ class Book:
         >>> f.getvalue()
         "something" #FIXME
         """
-        #implement me!
+        w = utf8csv.UnicodeWriter(csvf)
+        for b in bs:
+            w.writerow(b.tuplify())
 
     @classmethod
-    def load(kls, f):
+    def read_csv(kls, csvf):
+        """
+        """
+        reader = utf8csv.UnicodeReader(csvf)
+        for r in reader:
+            print r
+
+
+    @classmethod
+    def read_xml(kls, xmlf):
         """
         Load books from google books xml.
         usage: #fix this to use doctest
@@ -82,7 +98,7 @@ class Book:
             print b.title #prints titles
         """
         r = []
-        t = et.parse(f)
+        t = et.parse(xmlf)
         for found in t.xpath("/library/books/book"):
             title = found.xpath("title")[0].text
             google_id = found.xpath("id")[0].text
@@ -96,8 +112,8 @@ class Book:
 
 if __name__ == "__main__":
     with file("GoogleBooks/2012.xml") as f:
-        bs = Book.load(f)
-    for b in bs:
-        print b.title
+        bs = Book.read_xml(f)
+    with file("test.csv", 'w') as f:
+        Book.write_csv(bs, f)
 
 
