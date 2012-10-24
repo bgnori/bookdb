@@ -46,13 +46,15 @@ def validateISBN10(s):
 
 
 class Book:
-    def __init__(self, isbn, title):
+    fields = set(["isbn", "title", "props"]) #fixme 
+    def __init__(self, isbn, title): #fixme I wanna use "new", not "init" 
         '''has to be unicode, not utf-8'''
         self.isbn = isbn  # has to validate isbn here.
         self.title = title  #check encode !
+        self.props = {}
 
     def __str__(self):
-        raise UnicodeDecodeError
+        raise UnicodeEncodeError
 
     def __unicode__(self):
         return u'ISBN: %s, title: "%s"'%(self.isbn, self.title)
@@ -65,7 +67,17 @@ class Book:
         check ISBN check sum
         """
         return False
-    
+
+    def __getattr__(self, name):
+        return self.prop[name]
+
+    def __setattr__(self, name, value):
+        print name
+        if name in self.fields:
+            self.__dict__[name] = value
+        else:
+            self.__dict__["props"][name] = value
+
     @classmethod
     def write_csv(kls, bs, csvf):
         """
@@ -108,6 +120,8 @@ class Book:
             b = kls(isbn, title)
             r.append(b)
         return r
+
+
 
 if __name__ == "__main__":
 
