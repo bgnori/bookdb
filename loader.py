@@ -46,9 +46,15 @@ def validateISBN10(s):
 
 
 class Book:
-    def __init__(self, title, isbn):
+    def __init__(self, isbn, title):
         self.isbn = isbn  # has to validate isbn here.
         self.title = title  #check encode !
+
+    #def __str__(self):
+    #    return 'bop' #u'ISBN: %s, title: "%s"'%(self.isbn, self.title)
+
+    def __unicode__(self):
+        return u'ISBN: %s, title: "%s"'%(self.isbn, self.title)
 
     def tuplify(self):
         return (self.isbn, self.title)
@@ -78,8 +84,7 @@ class Book:
         """
         """
         reader = utf8csv.UnicodeReader(csvf)
-        for r in reader:
-            print r
+        return [Book(r[0], r[1]) for r in reader]
 
 
     @classmethod
@@ -99,14 +104,26 @@ class Book:
             google_id = found.xpath("id")[0].text
             url = found.xpath("url")[0].text
             isbn = found.xpath("identifier/value")[0].text
-            b = kls(title, isbn)
+            b = kls(isbn, title)
             r.append(b)
         return r
 
 if __name__ == "__main__":
+
     with file("GoogleBooks/2012.xml") as f:
         bs = Book.read_xml(f)
     with file("test.csv", 'w') as f:
         Book.write_csv(bs, f)
+
+    import codecs
+    import sys
+    sys.stdout = codecs.getwriter('utf_8')(sys.stdout)
+    with file("test.csv") as f:
+        cs = Book.read_csv(f)
+        for c in cs:
+            print unicode(c)
+            #print u'ISBN: %s, title: "%s"'%(c.isbn, c.title)
+            #print c.isbn 
+            #print c.title
 
 
