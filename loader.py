@@ -53,11 +53,12 @@ class Book:
         self.title = title  #check encode !
         self.props = {}
 
-    def __str__(self):
-        raise UnicodeEncodeError
+    #def __str__(self):
+    #    raise UnicodeEncodeError
 
     def __unicode__(self):
-        return u'ISBN: %s, title: "%s"'%(self.isbn, self.title)
+        sp = "".join(["(%s: %s)"%(k, v) for k, v in self.props.iteritems()])
+        return u'ISBN: %s, title: "%s" props: %s'%(self.isbn, self.title, sp)
 
     def tuplify(self):
         return (self.isbn, self.title)
@@ -69,10 +70,9 @@ class Book:
         return False
 
     def __getattr__(self, name):
-        return self.prop[name]
+        return self.props[name]
 
     def __setattr__(self, name, value):
-        print name
         if name in self.fields:
             self.__dict__[name] = value
         else:
@@ -114,10 +114,11 @@ class Book:
         t = et.parse(xmlf)
         for found in t.xpath("/library/books/book"):
             title = found.xpath("title")[0].text#.decode('utf-8')
-            google_id = found.xpath("id")[0].text
-            url = found.xpath("url")[0].text
             isbn = found.xpath("identifier/value")[0].text#.decode('utf-8')
             b = kls(isbn, title)
+
+            b.google_id = found.xpath("id")[0].text
+            b.google_url = found.xpath("url")[0].text
             r.append(b)
         return r
 
@@ -125,14 +126,22 @@ class Book:
 
 if __name__ == "__main__":
 
-    with file("GoogleBooks/2012.xml") as f:
-        bs = Book.read_xml(f)
-    with file("test.csv", 'w') as f:
-        Book.write_csv(bs, f)
-
     import codecs
     import sys
     sys.stdout = codecs.getwriter('utf_8')(sys.stdout)
+    with file("GoogleBooks/2012.xml") as f:
+        bs = Book.read_xml(f)
+    for b in bs:
+        print b.isbn
+        print b.title
+        print b.props
+        print unicode(b)
+        print b
+
+else:
+    with file("test.csv", 'w') as f:
+        Book.write_csv(bs, f)
+
     with file("test.csv") as f:
         cs = Book.read_csv(f)
         for c in cs:
