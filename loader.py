@@ -46,23 +46,18 @@ def validateISBN10(s):
 
 
 class Book:
-    def __init__(self, title, contributors, isbn):
-        self.title = title or ''
-        self.contributors = contributors or ''
-        self.ISBN = isbn or ''
-
+    def __init__(self, title, isbn):
+        self.isbn = isbn  # has to validate isbn here.
+        self.title = title  #check encode !
 
     def tuplify(self):
-        return (self.title, self.contributors, self.ISBN)
+        return (self.isbn, self.title)
 
     def hasValidISBN(self):
         """
         check ISBN check sum
-
-
         """
         return False
-
     
     @classmethod
     def write_csv(kls, bs, csvf):
@@ -103,10 +98,8 @@ class Book:
             title = found.xpath("title")[0].text
             google_id = found.xpath("id")[0].text
             url = found.xpath("url")[0].text
-            #contributors = found.xpath("contributor")[0].text
-            contributors = None
             isbn = found.xpath("identifier/value")[0].text
-            b = kls(title, contributors, isbn)
+            b = kls(title, isbn)
             r.append(b)
         return r
 
