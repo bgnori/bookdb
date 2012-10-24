@@ -1,5 +1,5 @@
 #!/usr/bin/python
-# coding utf8
+# coding=utf-8
 
 import lxml.etree as et
 
@@ -12,6 +12,34 @@ googlexmlpath = {
     'value':"""/library/books/book/identifier/value"""
 }
 
+def isbn_strip(s):
+    """
+    >>> isbn_strip("978-0-306-40615")
+    '978030640615'
+    >>> isbn_strip("0-201-53082-1")
+    '0201530821'
+    """
+
+def ISBN13CheckDigit(s):
+    """
+    from wikipeida http://en.wikipedia.org/wiki/International_Standard_Book_Number#ISBN-13_check_digit_calculation
+        s = 9*1 + 7*3 + 8*1 + 0*3 + 3*1 + 0*3 + 6*1 + 4*3 + 0*1 + 6*3 + 1*1 + 5*3
+          =   9 +  21 +   8 +   0 +   3 +   0 +   6 +  12 +   0 +  18 +   1 +  15
+          = 93
+        93 / 10 = 9 remainder 3
+        10 - 3 = 7
+    >>> ISBN13CheckDigit("978-0-306-40615")
+    3
+    """
+
+def validateISBN10(s):
+    """
+    from http://en.wikipedia.org/wiki/Check_digit#ISBN_10
+    take the ISBN 0-201-53082-1. 
+    The sum of products is 0*10 + 2*9 + 0*8 + 1*7 + 5*6 + 3*5 + 0*4 + 8*3 + 2*2 + 1*1 = 99 = 0 modulo 11. 
+    So the ISBN is valid.
+    >>> validateISBN10("0-201-53082-1")
+    """
 
 
 class Book:
@@ -19,6 +47,16 @@ class Book:
         self.title = title 
         self.contributors = contributors
         self.ISBN = isbn
+
+    def hasValidISBN(self):
+        """
+        check ISBN check sum
+
+
+        """
+        return False
+
+
 
     
     @classmethod
