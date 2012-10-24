@@ -20,11 +20,24 @@ class Book:
         self.contributors = contributors
         self.ISBN = isbn
 
+    
+    @classmethod
+    def write_csv(kls, bs, coref):
+        """
+        seq: sequence of Book instance
+        >>> from StringIO import StringIO
+        >>> f = StringIO()
+        >>> Book.write_csv([Book("How to use books", "author", "00000000000")], f)
+        >>> f.getvalue()
+        "something" #FIXME
+        """
+        #implement me!
+
     @classmethod
     def load(kls, f):
         """
         Load books from google books xml.
-        usage:
+        usage: #fix this to use doctest
         with file("GoogleBooks/2012.xml") as f:
             bs = Book.load(f)
         for b in bs:
@@ -43,11 +56,10 @@ class Book:
             r.append(b)
         return r
 
-with file("GoogleBooks/2012.xml") as f:
-    bs = Book.load(f)
-
-for b in bs:
-    print b.title
-
+if __name__ == "__main__":
+    with file("GoogleBooks/2012.xml") as f:
+        bs = Book.load(f)
+    for b in bs:
+        print b.title
 
 
