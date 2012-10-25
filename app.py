@@ -55,7 +55,10 @@ class CUIApp:
                 print unicode(found, "utf-8")#fileencoding!
 
     def book(self, isbn):
-        pass
+        for b in self.bs:
+            if b.isbn == isbn:
+                return b
+        return None
 
     def mark(self, b):
         self.marked.append(b)
@@ -64,8 +67,9 @@ class CUIApp:
         self.marked.remove(b)
 
     def showmarked(self):
+        #print self.marked
         for b in self.marked:
-            print b
+            print unicode(b)
 
     def mkshelf(self, name):
         if not self.marked:
