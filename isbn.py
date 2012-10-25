@@ -1,7 +1,8 @@
 #!/usr/bin/python
 # coding=utf-8
 
-
+class BadISBNException(Exception):
+    pass
 
 
 def isbn_strip(s):
@@ -44,6 +45,13 @@ def ISBN13CheckDigit(in_s):
 
     w = (1, 3, 1, 3, 1, 3, 1, 3, 1, 3, 1, 3)
     return 10 - (sum(map(lambda p : p[0] *p[1], zip(w, ns))) % 10 )
+
+def validateISBN13(in_s):
+    """
+    #FIXME
+
+    """
+    return True
 
 
 def ISBN10CheckDigit(in_s):
@@ -92,6 +100,7 @@ def isbn10to13(xs):
     >>> isbn10to13(xs) == ys
     True
     """
-    pass
+
+    return ("9", "7", "8") + xs
 
 
