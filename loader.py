@@ -31,7 +31,24 @@ def read_csv(csvf):
     """
     """
     reader = utf8csv.UnicodeReader(csvf)
-    return [model.Book(r[0], r[1]) for r in reader]
+    books = {}
+
+    for r in reader:
+        if len(r) == 2:
+            isbn = r[0]
+            title = r[1]
+            b = model.Book(isbn, title)
+            books[isbn] = b
+        elif len(r) == 3:
+            isbn = r[0]
+            key = r[1]
+            value = r[2]
+            b = books[isbn]
+            setattr(b, key, value)
+        else:
+            raise "Bad data row", r
+
+    return books.values()
 
 
 
@@ -82,6 +99,7 @@ if __name__ == "__main__":
     sys.stdout = codecs.getwriter('utf_8')(sys.stdout)
     with file("GoogleBooks/2012.xml") as f:
         bs = read_xml(f)
+        print 'loaded', len(bs)
     if 0:
         dump(xs)
 
@@ -91,10 +109,11 @@ if __name__ == "__main__":
     if 0:
         dump(bs)
 
-    if 0:
+    if 1:
         with file("test.csv") as f:
             cs = read_csv(f)
-    if 0:
-        dump(cs)
+    if 1:
+        #dump(cs)
+        print 'loaded', len(cs)
 
 
