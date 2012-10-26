@@ -10,12 +10,12 @@ import sys
 sys.stdout = codecs.getwriter('utf_8')(sys.stdout)
 
 import re
+import readline
+import cmd
 
-class CUIApp:
+class App:
     """
-    CUI Application.
-    use command module?
-
+    Application.
     """
     def __init__(self):
         self.bs = []
@@ -83,10 +83,7 @@ class CUIApp:
     def rmshelf(self):
         pass
 
-    
-
-app = CUIApp()
-
+"""
 app.load()
 #app.listall()
 #app.find(u"482.*")
@@ -94,4 +91,21 @@ app.load()
 app.mark(app.book("4582851037"))
 app.mark(app.book("4873115094"))
 app.showmarked()
+"""
+    
+class CUIApp(cmd.Cmd):
+    def do_load(self, arg):
+        print repr(arg)
+
+    def do_quit(self, arg):
+        sys.exit(0)
+    def do_exit(self, arg):
+        sys.exit(0)
+
+
+
+if __name__ == "__main__":
+    app = CUIApp()
+    app.cmdloop()
+
 
