@@ -112,9 +112,21 @@ class App:
 
     def mkshelf(self, name):
         if not self.marked:
-            return
+            return False
         for b in self.marked:
             setattr(b, "shelf", name,)
+        return True
+
+    def lsshelf(self, name):
+        r = []
+        for b in self.bs:
+            s = b.props.get("shelf", None)
+            if s and name in s:
+                r.append(b)
+        return r
+
+    def apropos(self, name):
+        pass
 
     def selectschelf(self, name):
         pass

@@ -68,6 +68,18 @@ class CUIApp(cmd.Cmd):
         for b in app.marked:
             print unicode(b)
 
+    def do_mkshelf(self, arg):
+        app = self.app
+        if app.mkshelf(arg):
+            print "made", arg
+        else:
+            print "failed make", arg
+            print "maybe need to mark some books"
+
+    def do_lsshelf(self, arg):
+        app = self.app
+        for b in app.lsshelf(arg):
+            print b.title
 
 
 if __name__ == "__main__":
