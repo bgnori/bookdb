@@ -12,6 +12,7 @@ sys.stdout = codecs.getwriter('utf_8')(sys.stdout)
 import re
 import readline
 import cmd
+import isbn as libisbn
 
 class App:
     """
@@ -54,7 +55,7 @@ class App:
             for found in r.findall(f.read()):
                 print unicode(found, "utf-8")#fileencoding!
 
-    def book(self, isbn):
+    def isbn(self, isbn):
         for b in self.bs:
             if b.isbn == isbn:
                 return b
@@ -94,14 +95,27 @@ app.showmarked()
 """
     
 class CUIApp(cmd.Cmd):
-    def do_load(self, arg):
+    def __init__(self):
+        cmd.Cmd.__init__(self)
+        self.app = App()
+        self.app.load()
+
+    def do_echoarg(self, arg):
         print repr(arg)
 
     def do_quit(self, arg):
-        sys.exit(0)
+        self.do_exit(arg)
     def do_exit(self, arg):
+        self.app.save()
         sys.exit(0)
 
+    def do_mark(self, arg):
+        b = self.app.isbn(arg)
+        if b:
+            self.app.mark(b)
+            print "marked ", b.title
+        else:
+            print "no such book"
 
 
 if __name__ == "__main__":
