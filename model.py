@@ -51,9 +51,83 @@ class Book:
     def __getattr__(self, name):
         return self.props[name]
 
+    def __nonzero__(self):
+        return True
+
     def __setattr__(self, name, value):
         if name in self.fields:
             self.__dict__[name] = value
         else:
             self.__dict__["props"][name] = value
 
+
+
+class App:
+    """
+    Application.
+    """
+    def __init__(self):
+        self.bs = []
+        self.filename = "test.csv"
+        self.marked = []
+
+    def load(self, bs):
+        self.bs = bs
+
+    def save(self):
+        return self.bs
+
+    def sync(self):
+        self.save()# FIXME incremental write
+
+    def get_list(self, count):
+        return self.bs[:count]
+
+    def add(self, isbn, title):
+        try:
+            b = model.Book(isbn, title)
+        except libisbn.BadISBNException:
+            pass
+        self.bs.append(b)
+        self.sync()
+
+    def find(self, s):
+        #FIXME
+        r = re.compile(s, re.UNICODE)
+        with file(self.filename) as f:
+            for found in r.findall(f.read()):
+                print unicode(found, "utf-8")#fileencoding!
+
+    def isbn(self, isbn):
+        for b in self.bs:
+            if b.isbn == isbn:
+                return b
+        return None
+
+    def mark(self, b):
+        self.marked.append(b)
+
+    def unmark(self, b):
+        self.marked.remove(b)
+
+    def mkshelf(self, name):
+        if not self.marked:
+            return
+        for b in self.marked:
+            setattr(b, "shelf", name,)
+
+    def selectschelf(self, name):
+        pass
+
+    def rmshelf(self):
+        pass
+
+"""
+app.load()
+#app.listall()
+#app.find(u"482.*")
+#app.find(u"入門") #FIXME
+app.mark(app.book("4582851037"))
+app.mark(app.book("4873115094"))
+app.showmarked()
+"""
