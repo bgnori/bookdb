@@ -6,6 +6,15 @@ import isbn as libisbn
 
 class Book:
     fields = set(["isbn", "title", "props"]) #fixme 
+
+    @classmethod
+    def from_tuple(klass, t):
+        assert t[0] == "Book"
+        return Book(t[1], t[2])
+
+    def tuplify(self):
+        return ("Book", self.isbn, self.title)
+
     def validateISBN(self, isbn):
         xs = libisbn.isbn_strip(isbn)
         assert xs
@@ -42,8 +51,6 @@ class Book:
         sp = "".join(["(%s: %s)"%(k, v) for k, v in self.props.iteritems()])
         return u'ISBN: %s, title: "%s" props: %s'%(self.isbn, self.title, sp)
 
-    def tuplify(self):
-        return (self.isbn, self.title)
 
     def iterprops(self):
         return self.props.iteritems()
@@ -59,6 +66,25 @@ class Book:
             self.__dict__[name] = value
         else:
             self.__dict__["props"][name] = value
+
+
+class TupleSteamer:
+    """
+    >>> ts = TupleSteamer(...)
+    >>> for t in ts:
+            print t
+    ('Book', 1234567890123, 'title')
+    (1234567890123, 'tag', tag0)
+    (1234567890123, 'tag', tag1)
+    ('tag', tag0, 'first tag')
+    ('tag', tag1, 'second tag')
+    """
+
+    def __init__(self, seq):
+        pass
+
+    def __next__(self):
+        pass
 
 
 
