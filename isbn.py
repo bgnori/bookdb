@@ -41,10 +41,14 @@ def ISBN13CheckDigit(in_s):
     elif isinstance(in_s, (list, tuple)):
         ns = in_s
     else:
-        raise "Bad input"
+        raise BadISBNException
+
+    if len(ns) != 12:
+        raise BadISBNException
 
     w = (1, 3, 1, 3, 1, 3, 1, 3, 1, 3, 1, 3)
     return 10 - (sum(map(lambda p : p[0] *p[1], zip(w, ns))) % 10 )
+
 
 def validateISBN13(in_s):
     """
@@ -65,6 +69,19 @@ def ISBN10CheckDigit(in_s):
         >>> ISBN10CheckDigit("410109205")
         2
     """
+    if isinstance(in_s, str):
+        ns = isbn_strip(in_s)
+    elif isinstance(in_s, (list, tuple)):
+        ns = in_s
+    else:
+        raise BadISBNException
+
+    if len(ns) != 9:
+        raise BadISBNException
+
+    w = list(range(2, 11))
+    w.reverse()
+    return 11 - sum(map(lambda p: p[0]*p[1], zip(w, ns))) % 11
 
 
 def validateISBN10(in_s):
@@ -81,14 +98,14 @@ def validateISBN10(in_s):
     elif isinstance(in_s, (list, tuple)):
         ns = in_s
     else:
-        raise "Bad input"
+        return False
 
     w = list(range(1, 11))
     w.reverse()
     return sum(map(lambda p: p[0]*p[1], zip(w, ns))) % 11 == 0
 
 
-def isbn10to13(xs):
+def isbn10to13(in_s):
     """
     Convert isbn-10 to isbn-13
     1) removes old checkdigit
@@ -101,6 +118,17 @@ def isbn10to13(xs):
     True
     """
 
-    return ("9", "7", "8") + xs
+    if isinstance(in_s, str):
+        ns = isbn_strip(in_s)
+    elif isinstance(in_s, (list, tuple)):
+        ns = in_s
+    else:
+        raise BadISBNException
+
+    if not validateISBN10(ns):
+        raise BadISBNException
+    
+    xs = (9, 7, 8) + ns[:9]
+    return  xs + (ISBN13CheckDigit(xs), )
 
 
