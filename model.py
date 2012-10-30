@@ -69,7 +69,8 @@ class App:
     def __init__(self):
         self.bs = []
         self.filename = "test.csv"
-        self.marked = []
+        self.marked = set()
+        self.focus = 0
 
     def load(self, bs):
         self.bs = bs
@@ -104,20 +105,19 @@ class App:
                 return b
         return None
 
-    def mark(self, b):
-        self.marked.append(b)
+    def mark(self):
+        self.marked.add(self.focus)
 
-    def unmark(self, b):
-        self.marked.remove(b)
+    def unmark(self):
+        self.marked.discard(self.focus)
 
-    def mkshelf(self, name):
-        if not self.marked:
-            return False
-        for b in self.marked:
-            setattr(b, "shelf", name,)
-        return True
+    def mktag(self, name):
+        pass
 
-    def lsshelf(self, name):
+    def rmtag(self):
+        pass
+
+    def lstag(self, name):
         r = []
         for b in self.bs:
             s = b.props.get("shelf", None)
@@ -125,14 +125,9 @@ class App:
                 r.append(b)
         return r
 
-    def apropos(self, name):
+    def mark_all_with_tag(self, tag):
         pass
 
-    def selectschelf(self, name):
-        pass
-
-    def rmshelf(self):
-        pass
 
 """
 app.load()

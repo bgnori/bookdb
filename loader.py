@@ -61,6 +61,7 @@ googlexmlpath = {
     'value':"""/library/books/book/identifier/value"""
 }
 
+
 def read_xml(xmlf):
     """
     Load books from google books xml.
@@ -69,6 +70,9 @@ def read_xml(xmlf):
         bs = Book.load(f)
     for b in bs:
         print b.title #prints titles
+
+    todo:
+        tag as "google books" + shelf name in google books
     """
     r = []
     t = et.parse(xmlf)
