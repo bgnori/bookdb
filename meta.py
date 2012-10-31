@@ -1,7 +1,6 @@
 #!/usr/bin/python
 # coding=utf-8
 
-
 """
 (id, key, <value type>, value)
 
@@ -89,5 +88,73 @@ This forces us to "join".... which I do not want.
 ("Relation", <id-6>, "Left", <id-0>)
 ("Relation", <id-6>, "Right", <id-4>)
 
+
+discussion:
+ * trade off against ORM+SQLdb
+  * human readable datafile
+   * There is sql with csv? should be checked out.
+   * can export/import. not csv as storage
+ * why not pickle?
+  * not readable from non-python
+ * why not xml?
+  * ref, flexibility
+ * why not yaml?
+  * not sure.
+  * & and * are useful.
+   * Yes! PyYaml supports it!
+    * the point is, how to generate name for &/*
+     * they do automatically.
+'''python
+f = "fooo"
+zm = [f, f]
+
+print yaml.dump([zm, zm])
+'''
+would give
+'''
+ - &id001 [fooo, fooo]
+ - *id001
+'''
+   * tag (typing) is also supported
+    * we need validator?
+ * Is worth for sweat and bugs?
+  * not sure.
+ * Is this fun?
+  * yes
+
+We use yaml.
+questions are:
+    How to map regular objects into list+str+int combination? => Proxy
+
+Should write sample yamls first.
 """
+
+
+
+import yaml
+
+
+f = "fooo"
+g = "gooo"
+zm = [f, g]
+
+print yaml.dump([zm, zm])
+
+
+class Proxy:
+    def __init__(self):
+        pass
+
+    def bind(self, x):
+        self.binded = x #FIXME! shadowing 
+
+    def __getattr__(self, name):
+        return self.binded[name]
+
+    def __setattr__(self, name, value):
+        if name in self.fields:
+            self.__dict__[name] = value
+        else:
+            self.__dict__["binded"][name] = value
+
 
