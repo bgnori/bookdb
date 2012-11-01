@@ -156,7 +156,7 @@ class YamlProxy(object):
     >>> p = YamlProxy(y)
     >>> p.Tags.Category.Cooking[0].isbn
     '4873115094'
-    >>> p.Tags.Category.Cooking[0].title
+    >>> unicode(p.Tags.Category.Cooking[0].title, "utf8")
     u'Cooking for Geeks: 料理の科学と実践レシピ'
 
     another sample
