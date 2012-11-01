@@ -148,34 +148,54 @@ with file("sample.yaml") as f:
 print x["Tags"]["Category"]["Cooking"][0]["title"]
 """
 
+u"""
+>>> f = file("sample.yaml")
+>>> y = yaml.load(f)
+>>> p = wrap(y)
+>>> p.Tags.Category.Cooking[0].isbn
+'4873115094'
+>>> p.Tags.Category.Cooking[0].title.decode("utf8")
+u'Cooking for Geeks: 料理の科学と実践レシピ'
+
+another sample
+>>> p = wrap(yaml.load("isbn: 'this is isbn'"))
+>>> p.isbn
+'this is isbn'
+"""
+
+def wrap(x):
+    if isinstance(x, list):
+        return YamlProxyList(x)
+    if isinstance(x, dict):
+        return YamlProxyDict(x)
+    return x 
+
 
 class YamlProxy(object):
-    u"""
-    >>> f = file("sample.yaml")
-    >>> y = yaml.load(f)
-    >>> p = YamlProxy(y)
-    >>> p.Tags.Category.Cooking[0].isbn
-    '4873115094'
-    >>> unicode(p.Tags.Category.Cooking[0].title, "utf8")
-    u'Cooking for Geeks: 料理の科学と実践レシピ'
+    def __init__(self, obj):
+        self.__dict__["_objects"] = obj
 
-    another sample
-    >>> p = YamlProxy(yaml.load("isbn: 'this is isbn'"))
+class YamlProxyList(YamlProxy):
+    def __getitem__(self, nth):
+        return wrap(self._objects[nth])
+
+    def __setitem__(self, nth, value):
+        self._objects[nth] = value
+
+
+class YamlProxyDict(YamlProxy):
+    """
+    >>> p = wrap(yaml.load("isbn: 'this is isbn'"))
     >>> p.isbn
     'this is isbn'
+    >>> p.title = "this is title"
+    >>> p.title
+    'this is title'
     """
-    def __init__(self, obj):
-        self._objects = obj
-
-    def __getitem__(self, nth):
-        return self.__getx__(self._objects[nth])
-
     def __getattr__(self, name):
-        return self.__getx__(self._objects.get(name))
+        return wrap(self._objects.get(name))
 
-    def __getx__(self, found):
-        if isinstance(found, (list, dict)):
-            return YamlProxy(found)
-        return found
+    def __setattr__(self, name, value):
+        self.__dict__["_objects"][name] = value
 
 
