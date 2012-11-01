@@ -140,11 +140,42 @@ g = "gooo"
 zm = [f, g]
 
 print yaml.dump([zm, zm])
-"""
 
 with file("sample.yaml") as f:
     x = yaml.load(f)
 
 #print x
 print x["Tags"]["Category"]["Cooking"][0]["title"]
+"""
+
+
+class YamlProxy(object):
+    u"""
+    >>> f = file("sample.yaml")
+    >>> y = yaml.load(f)
+    >>> p = YamlProxy(y)
+    >>> p.Tags.Category.Cooking[0].isbn
+    '4873115094'
+    >>> p.Tags.Category.Cooking[0].title
+    u'Cooking for Geeks: 料理の科学と実践レシピ'
+
+    another sample
+    >>> p = YamlProxy(yaml.load("isbn: 'this is isbn'"))
+    >>> p.isbn
+    'this is isbn'
+    """
+    def __init__(self, obj):
+        self._objects = obj
+
+    def __getitem__(self, nth):
+        return self.__getx__(self._objects[nth])
+
+    def __getattr__(self, name):
+        return self.__getx__(self._objects.get(name))
+
+    def __getx__(self, found):
+        if isinstance(found, (list, dict)):
+            return YamlProxy(found)
+        return found
+
 
