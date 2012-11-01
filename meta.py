@@ -134,27 +134,17 @@ Should write sample yamls first.
 import yaml
 
 
+"""
 f = "fooo"
 g = "gooo"
 zm = [f, g]
 
 print yaml.dump([zm, zm])
+"""
 
+with file("sample.yaml") as f:
+    x = yaml.load(f)
 
-class Proxy:
-    def __init__(self):
-        pass
-
-    def bind(self, x):
-        self.binded = x #FIXME! shadowing 
-
-    def __getattr__(self, name):
-        return self.binded[name]
-
-    def __setattr__(self, name, value):
-        if name in self.fields:
-            self.__dict__[name] = value
-        else:
-            self.__dict__["binded"][name] = value
-
+#print x
+print x["Tags"]["Category"]["Cooking"][0]["title"]
 
