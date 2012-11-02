@@ -34,6 +34,9 @@ another sample
 """
 
 def wrap(x):
+    """
+    Todo: Schema support
+    """
     if isinstance(x, list):
         return YamlProxyList(x)
     if isinstance(x, dict):
@@ -43,7 +46,11 @@ def wrap(x):
 
 class YamlProxy(object):
     def __init__(self, obj):
+        assert obj is not None
         self.__dict__["_objects"] = obj
+
+    def __repr__(self):
+        return "YamlProxy instance with %s"%(self._objects,)
 
 class YamlProxyList(YamlProxy):
     def __getitem__(self, nth):
@@ -58,6 +65,12 @@ class YamlProxyList(YamlProxy):
     def __len__(self):
         return len(self._objects)
 
+    def append(self, x):
+        self._objects.append(x)
+
+    def __repr__(self):
+        return "YamlProxyList instance with %d items"%(len(self._objects),)
+
 
 class YamlProxyDict(YamlProxy):
     """
@@ -69,6 +82,7 @@ class YamlProxyDict(YamlProxy):
     'this is title'
     """
     def __keys__(self):
+        assert isinstance(self._objects, dict)
         return self._objects.keys()
 
     def __getattr__(self, name):
@@ -83,4 +97,11 @@ class YamlProxyDict(YamlProxy):
     def __setitem__(self, name, value):
         self.__dict__["_objects"][name] = value
 
+    def __repr__(self):
+        assert isinstance(self._objects, dict)
+        return "%s"%(self.__keys__(),)
+
+def bind(kls):
+    print kls
+    return kls
 

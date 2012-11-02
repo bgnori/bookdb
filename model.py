@@ -9,15 +9,29 @@ import yaml
 class Yamlable(meta.YamlProxyDict):
     def __init__(self, **argv):
         kls = self.__class__
-        d = dict([(key, None) for k in kls.fields])
+        d = dict([(k, None) for k in kls.fields])
         d.update(argv)
-        self.__dict__["_objects"] = d
+        meta.YamlProxyDict.__init__(self, d)
+        self.test()
+    def test(self):
+        assert isinstance(self._objects, dict)
 
+
+@meta.bind
 class Tag(Yamlable):
     fields = ()
 
+@meta.bind
+class Category(Tag):
+    pass
+
+@meta.bind
+class Books(meta.YamlProxyList):
+    pass
+
+@meta.bind
 class Book(Yamlable):
-    fields = ()
+    fields = ("isbn", "title")
 
 
 class Library(object):
@@ -25,20 +39,22 @@ class Library(object):
     >>> lib = Library()
     >>> f = file("sample.yaml")
     >>> lib.load(f)
-    >>> lib.show(lib.Root())
-    set(['Books', 'Tags'])
-    >>> len(lib.Books())
-    5
-    >>> lib.show(lib.Tags())
-    set(['Category', 'Status'])
-    >>> lib.show(lib.Categories())
-    set(['Engineering', 'Cooking', 'Business'])
+    >>> lib.Root()
+    ['Books', 'Tags']
+    >>> lib.Books()
+    YamlProxyList instance with 5 items
+    >>> lib.Tags()
+    ['Category', 'Status']
+    >>> lib.Categories()
+    ['Engineering', 'Cooking', 'Business']
     >>> t = lib.Category("Politics")
-    >>> lib.show(lib.Categories())
-    set(['Cooking', 'Business', Engineering', 'Politics'])
-    >>> lib.show(lib.path("/Tags/Categories/Cooking"))
-    'Book, isbn: 4873115094'
-
+    >>> t
+    []
+    >>> lib.Categories()
+    ['Politics', 'Engineering', 'Cooking', 'Business']
+    >>> b = lib.Book()
+    >>> b
+    ['isbn', 'title']
     """
     def __init__(self):
         self.objects = None
@@ -48,14 +64,6 @@ class Library(object):
 
     def save(self, f):
         pass
-
-    def show(self, obj):
-        if isinstance(obj, meta.YamlProxyDict):
-            print set(obj.__keys__())
-        elif isinstance(obj, meta.YamlProxyList):
-            print len(obj)
-        else:
-            print obj
 
     def Root(self):
         return self.objects
@@ -67,19 +75,45 @@ class Library(object):
         return self.objects.Tags
 
     def Categories(self):
-        return self.objects.Tags.Category
+        return self.Tags().Category
 
     def Book(self):
-        pass
+        b = Book()
+        self.objects.Books.append(b)
+        return b
 
     def Tag(self, name):
-        self.objects.Tags[name] = Tag()
+        t = Tag()
+        self.objects.Tags[name] = t
+        return t
 
     def Category(self, name):
-        self.objects.Tags.Category[name] = Tag()
+        c = Tag()
+        self.Tags().Category[name] = c
+        return c
 
     def path(self, p):
-        pass
+        """
+        Check YPath first.
+        .>>> lib = Library()
+        .>>> f = file("sample.yaml")
+        .>>> lib.load(f)
+        .>>> lib.path("/Tags/Categories/Cooking[0]")
+        'Book, isbn: 4873115094'
+
+        """
+        xs = p.split("/")
+        print xs
+        obj = self.objects
+        for x in xs:
+            if not x:
+                continue
+            print x, obj
+            if obj:
+                obj = getattr(obj, x)
+            else:
+                return None
+        return obj
 
 
 class App:
