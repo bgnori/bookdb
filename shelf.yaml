@@ -1,24 +1,54 @@
-
-Root:
-  type: dict
-  child:
-    - "Books"
-    - "Tags"
-
-
-Books:
-  type: list
-  child:
-    - "Book"
-
-Book:
-  type: dict
-  child:
-    - "Tag"
-    - "Property"
-
-  
-Tags:
-
-
+# it is written in Kwalify
+name: archive #or shelf
+desc: book data base
+type: map #Root
+mapping:
+  "Books":
+    type: seq
+    required: yes
+    sequence:
+      - 
+        type: map #Book
+        mapping: &book
+          "isbn":
+            type: str
+            required: yes
+            unique: yes
+          "title":
+            type: str
+            required: yes
+          "tags":
+            type: seq 
+            sequence:
+              - *notyet
+              - *working
+              - *done
+          =:
+            type: any
+  "Tags":
+    type: map
+    required: yes
+    mapping:
+      "Category": &category
+        type: map
+        mapping:
+          *category
+      "Status":
+        type: map
+        mapping:
+          "notyet": &notyet
+            type: seq
+            sequence:
+              - *book
+          "working": &working
+            type: seq
+            sequence:
+              - *book
+          "done": &done
+            type: seq
+            sequence:
+              - *book
+          =:
+            type: any
+          
 
