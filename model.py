@@ -11,44 +11,31 @@ class Yamlable(meta.YamlProxyDict):
         kls = self.__class__
         d = dict([(key, None) for k in kls.fields])
         d.update(argv)
-        self._objects = d
+        self.__dict__["_objects"] = d
 
 class Tag(Yamlable):
-    pass
+    fields = ()
 
 class Book(Yamlable):
-    pass
+    fields = ()
 
-
-class Cursor(object):
-    def __init__(self, objects):
-        self.objects = objects
-
-    def show(self):
-        obj = self.objects
-        if isinstance(obj, meta.YamlProxyDict):
-            print obj.__keys__() 
-        elif isinstance(obj, meta.YamlProxyList):
-            print len(obj)
-        else:
-            print obj
-
-    def Books(self):
-        self.objects = self.objects.Books
 
 class Library(object):
     """
     >>> lib = Library()
     >>> f = file("sample.yaml")
     >>> lib.load(f)
-    >>> c = lib.cursor()
-    >>> c.show()
+    >>> lib.show(lib.Root())
     ['Books', 'Tags']
-    >>> c.Books()
-    >>> c.show()
+    >>> len(lib.Books())
     5
-
-    >>> t = lib.tag("Cooking")
+    >>> lib.show(lib.Tags())
+    ['Category', 'Status']
+    >>> lib.show(lib.Categories())
+    ['Cooking', 'Business', 'Engineering']
+    >>> t = lib.Category("Politics")
+    >>> lib.show(lib.Categories())
+    ['Cooking', 'Business', 'Engineering', 'Politics']
 
     """
     def __init__(self):
@@ -59,13 +46,35 @@ class Library(object):
 
     def save(self, f):
         pass
-    def cursor(self):
-        return Cursor(self.objects)
 
-    def tag(self, name):
+    def show(self, obj):
+        if isinstance(obj, meta.YamlProxyDict):
+            print obj.__keys__() 
+        elif isinstance(obj, meta.YamlProxyList):
+            print len(obj)
+        else:
+            print obj
+
+    def Root(self):
+        return self.objects
+
+    def Books(self):
+        return self.objects.Books
+
+    def Tags(self):
+        return self.objects.Tags
+
+    def Categories(self):
+        return self.objects.Tags.Category
+
+    def Book(self):
         pass
-    def book(self):
-        pass
+
+    def Tag(self, name):
+        self.objects.Tags[name] = Tag()
+
+    def Category(self, name):
+        self.objects.Tags.Category[name] = Tag()
 
 
 class App:

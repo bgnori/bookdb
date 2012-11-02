@@ -74,7 +74,13 @@ class YamlProxyDict(YamlProxy):
     def __getattr__(self, name):
         return wrap(self._objects.get(name))
 
+    def __getitem__(self, name):
+        return wrap(self.__dict__["_objects"][name])
+
     def __setattr__(self, name, value):
+        self.__dict__["_objects"][name] = value
+
+    def __setitem__(self, name, value):
         self.__dict__["_objects"][name] = value
 
 
