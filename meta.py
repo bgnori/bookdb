@@ -4,38 +4,18 @@
 
 import yaml
 
-"""
-f = "fooo"
-g = "gooo"
-zm = [f, g]
-
-print yaml.dump([zm, zm])
-
-with file("sample.yaml") as f:
-    x = yaml.load(f)
-
-#print x
-print x["Tags"]["Category"]["Cooking"][0]["title"]
-"""
-
-u"""
->>> f = file("sample.yaml")
->>> y = yaml.load(f)
->>> p = wrap(y)
->>> p.Tags.Category.Cooking[0].isbn
-'4873115094'
->>> p.Tags.Category.Cooking[0].title.decode("utf8")
-u'Cooking for Geeks: 料理の科学と実践レシピ'
-
-another sample
->>> p = wrap(yaml.load("isbn: 'this is isbn'"))
->>> p.isbn
-'this is isbn'
-"""
-
 def wrap(x):
-    """
+    u"""
     Todo: Schema support
+    >>> f = file("sample.yaml")
+    >>> y = yaml.load(f)
+    >>> p = wrap(y)
+    >>> p.Tags.Category.Cooking[0].isbn
+    '4873115094'
+    >>> p.Tags.Category.Cooking[0].title
+    u'Cooking for Geeks: 料理の科学と実践レシピ'
+
+    #print x["Tags"]["Category"]["Cooking"][0]["title"]
     """
     if isinstance(x, list):
         return YamlProxyList(x)
@@ -53,6 +33,15 @@ class YamlProxy(object):
         return "YamlProxy instance with %s"%(self._objects,)
 
 class YamlProxyList(YamlProxy):
+    """
+    >>> p = wrap(yaml.load("[0, 100, 2]"))
+    >>> p[0]
+    0
+    >>> p[1]
+    100
+    >>> p[-1]
+    2
+    """
     def __getitem__(self, nth):
         return wrap(self._objects[nth])
 
@@ -114,3 +103,14 @@ class YSchema(object):
             return kls
         return foo
 
+class Validator(object):
+    """
+    Kwailify
+    http://jp.rubyist.net/magazine/?0012-YAML
+
+     make Kwalipy??
+
+    http://pyyaml.org/wiki/YAMLSchemaDiscussion
+
+    """
+    pass
