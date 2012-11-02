@@ -26,16 +26,18 @@ class Library(object):
     >>> f = file("sample.yaml")
     >>> lib.load(f)
     >>> lib.show(lib.Root())
-    ['Books', 'Tags']
+    set(['Books', 'Tags'])
     >>> len(lib.Books())
     5
     >>> lib.show(lib.Tags())
-    ['Category', 'Status']
+    set(['Category', 'Status'])
     >>> lib.show(lib.Categories())
-    ['Cooking', 'Business', 'Engineering']
+    set(['Engineering', 'Cooking', 'Business'])
     >>> t = lib.Category("Politics")
     >>> lib.show(lib.Categories())
-    ['Cooking', 'Business', 'Engineering', 'Politics']
+    set(['Cooking', 'Business', Engineering', 'Politics'])
+    >>> lib.show(lib.path("/Tags/Categories/Cooking"))
+    'Book, isbn: 4873115094'
 
     """
     def __init__(self):
@@ -49,7 +51,7 @@ class Library(object):
 
     def show(self, obj):
         if isinstance(obj, meta.YamlProxyDict):
-            print obj.__keys__() 
+            print set(obj.__keys__())
         elif isinstance(obj, meta.YamlProxyList):
             print len(obj)
         else:
@@ -75,6 +77,9 @@ class Library(object):
 
     def Category(self, name):
         self.objects.Tags.Category[name] = Tag()
+
+    def path(self, p):
+        pass
 
 
 class App:
