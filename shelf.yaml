@@ -1,0 +1,24 @@
+
+Root:
+  type: dict
+  child:
+    - "Books"
+    - "Tags"
+
+
+Books:
+  type: list
+  child:
+    - "Book"
+
+Book:
+  type: dict
+  child:
+    - "Tag"
+    - "Property"
+
+  
+Tags:
+
+
+
