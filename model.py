@@ -16,20 +16,21 @@ class Yamlable(meta.YamlProxyDict):
     def test(self):
         assert isinstance(self._objects, dict)
 
+book_schema = meta.YSchema(0)
 
-@meta.bind
+@book_schema.bind()
 class Tag(Yamlable):
     fields = ()
 
-@meta.bind
+@book_schema.bind()
 class Category(Tag):
     pass
 
-@meta.bind
+@book_schema.bind()
 class Books(meta.YamlProxyList):
     pass
 
-@meta.bind
+@book_schema.bind()
 class Book(Yamlable):
     fields = ("isbn", "title")
 

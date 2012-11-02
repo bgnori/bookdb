@@ -101,7 +101,16 @@ class YamlProxyDict(YamlProxy):
         assert isinstance(self._objects, dict)
         return "%s"%(self.__keys__(),)
 
-def bind(kls):
-    print kls
-    return kls
+class YSchema(object):
+    def __init__(self, f):
+        pass
+    def bind(self, as_name=None):
+        def foo(kls):
+            if as_name is None:
+                name = kls.__name__
+            else:
+                name = as_name
+            print "binding", name, kls
+            return kls
+        return foo
 
