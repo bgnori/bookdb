@@ -52,6 +52,12 @@ class YamlProxyList(YamlProxy):
     def __setitem__(self, nth, value):
         self._objects[nth] = value
 
+    def __iter__(self):
+        for n in self._objects:
+            yield n
+    def __len__(self):
+        return len(self._objects)
+
 
 class YamlProxyDict(YamlProxy):
     """
@@ -62,6 +68,9 @@ class YamlProxyDict(YamlProxy):
     >>> p.title
     'this is title'
     """
+    def __keys__(self):
+        return self._objects.keys()
+
     def __getattr__(self, name):
         return wrap(self._objects.get(name))
 

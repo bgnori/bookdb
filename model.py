@@ -4,71 +4,68 @@
 
 import isbn as libisbn
 import meta
+import yaml
 
-class Book:
-    fields = set(["isbn", "title", "props"]) #fixme 
+class Yamlable(meta.YamlProxyDict):
+    def __init__(self, **argv):
+        kls = self.__class__
+        d = dict([(key, None) for k in kls.fields])
+        d.update(argv)
+        self._objects = d
 
-    @classmethod
-    def from_tuple(klass, t):
-        assert t[0] == "Book"
-        return Book(t[1], t[2])
+class Tag(Yamlable):
+    pass
 
-    def tuplify(self):
-        return ("Book", self.isbn, self.title)
+class Book(Yamlable):
+    pass
 
-    def validateISBN(self, isbn):
-        xs = libisbn.isbn_strip(isbn)
-        assert xs
 
-        if len(xs) == 10:
-            if not libisbn.validateISBN10(xs):
-                raise libisbn.BadISBNException
-            xs = libisbn.isbn10to13(xs)
+class Cursor(object):
+    def __init__(self, objects):
+        self.objects = objects
 
-        elif len(xs) == 13:
-            if not libisbn.validateISBN13(xs):
-                raise libisbn.BadISBNException
+    def show(self):
+        obj = self.objects
+        if isinstance(obj, meta.YamlProxyDict):
+            print obj.__keys__() 
+        elif isinstance(obj, meta.YamlProxyList):
+            print len(obj)
         else:
-            print "bad length %s"%(isbn,)
-            raise
+            print obj
 
-        assert xs
-        assert len(xs) == 13
-        return ''.join(map(str, xs))
+    def Books(self):
+        self.objects = self.objects.Books
 
-    def __init__(self, isbn, title): #fixme I wanna use "new", not "init" 
-        '''has to be unicode, not utf-8'''
-        if False:
-            isbn = self.validateISBN(isbn)
+class Library(object):
+    """
+    >>> lib = Library()
+    >>> f = file("sample.yaml")
+    >>> lib.load(f)
+    >>> c = lib.cursor()
+    >>> c.show()
+    ['Books', 'Tags']
+    >>> c.Books()
+    >>> c.show()
+    5
 
-        self.isbn = isbn  # has to validate isbn here.
-        self.title = title  #check encode !
-        self.props = {}
+    >>> t = lib.tag("Cooking")
 
-    #def __str__(self):
-    #    raise UnicodeEncodeError
+    """
+    def __init__(self):
+        self.objects = None
 
-    def __unicode__(self):
-        sp = "".join(["(%s: %s)"%(k, v) for k, v in self.props.iteritems()])
-        return u'ISBN: %s, title: "%s" props: %s'%(self.isbn, self.title, sp)
+    def load(self, f):
+        self.objects = meta.wrap(yaml.load(f))
 
+    def save(self, f):
+        pass
+    def cursor(self):
+        return Cursor(self.objects)
 
-    def iterprops(self):
-        return self.props.iteritems()
-
-    def __getattr__(self, name):
-        return self.props[name]
-
-    def __nonzero__(self):
-        return True
-
-    def __setattr__(self, name, value):
-        if name in self.fields:
-            self.__dict__[name] = value
-        else:
-            self.__dict__["props"][name] = value
-
-
+    def tag(self, name):
+        pass
+    def book(self):
+        pass
 
 
 class App:
