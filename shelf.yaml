@@ -20,9 +20,12 @@ mapping:
           "tags":
             type: seq 
             sequence:
-              - *notyet
-              - *working
-              - *done
+              - 
+                *notyet
+              - 
+                *working
+              - 
+                *done
           =:
             type: any
   "Tags":
@@ -39,16 +42,17 @@ mapping:
           "notyet": &notyet
             type: seq
             sequence:
-              - *book
+              - 
+                *book
           "working": &working
             type: seq
             sequence:
-              - *book
+              - 
+                *book
           "done": &done
             type: seq
             sequence:
-              - *book
+              - 
+                *book
           =:
             type: any
-          
-
