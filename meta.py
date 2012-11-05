@@ -32,7 +32,7 @@ class YamlProxy(object):
     def __repr__(self):
         return "YamlProxy instance with %s"%(self._objects,)
 
-    def _wrap(self, obj):
+    def _wrap(self, obj, name):
         return wrap(obj)
 
     def _validate_get(self, param):
@@ -53,7 +53,7 @@ class ListMixin(object):
     """
     def __getitem__(self, nth):
         self._validate_get(nth)
-        return self._wrap(self._objects[nth])
+        return self._wrap(self._objects[nth], nth)
 
     def __setitem__(self, nth, value):
         self._validate_set(nth, value)
@@ -90,11 +90,11 @@ class DictMixin(object):
 
     def __getattr__(self, name):
         self._validate_get(name)
-        return self._wrap(self._objects.get(name))
+        return self._wrap(self._objects.get(name), name)
 
     def __getitem__(self, name):
         self._validate_get(name)
-        return self._wrap(self.__dict__["_objects"][name])
+        return self._wrap(self.__dict__["_objects"][name], name)
 
     def __setattr__(self, name, value):
         self._validate_set(name, value)
@@ -115,15 +115,11 @@ class YamlDict(DictMixin, YamlProxy):
 
 class YSchemaProxy(YamlProxy):
     schema = None
-    def __init__(self, obj, path):
+    def __init__(self, obj):
         YamlProxy.__init__(self, obj)
-        self.__dict__["_path"] = path
 
-    def path(self):
-        return self._path
-
-    def _wrap(self, obj):
-        return self.schema.wrap(obj, self._path)
+    def _wrap(self, obj, name):
+        return self.schema.wrap(obj, self, name)
 
 
 
@@ -131,12 +127,16 @@ class YSchemaList(ListMixin, YSchemaProxy):
     pass
 
 
+class ValidationError(Exception):
+    pass
+
 class YSchemaDict(DictMixin, YSchemaProxy):
     field = ()
     def _validate_get(self, param):
-        pass
-        #if param not in self.__class__.field:
-        #    raise
+        if param not in self.__class__.field:
+            print param
+            print self.__class__.field
+            raise ValidationError, "%s got %s, %s"%(self, param, self.__class__.field)
 
     def _validate_set(self, param, value):
         pass
@@ -152,16 +152,22 @@ class YSchema(object):
         Dynamic gen. of classes?
         """
 
-    def wrap(self, x, path=None):
+    def get_class(self, name):
+        return self.kls[name]
+
+    def wrap(self, x, owner=None, name=None):
         #print "YSchema", x
-        if path is None:
-            p = "/"
-        else:
-            p = path
-        if isinstance(x, list):
-            return YSchemaList(x, p)
+        if owner is None:
+            k = self.get_class("Root")
+            return k(x)
+
         if isinstance(x, dict):
-            return YSchemaDict(x, p)
+            assert name in owner.__class__.field
+            j = self.get_class(name)
+            return j(x)
+
+        if isinstance(x, list):
+            return YSchemaList(x)
         return x 
 
     def bind(self, as_name=None):

@@ -9,24 +9,35 @@ import yaml
 
 book_schema = YSchema(0)
 
-@book_schema.bind()
-class Tag(YSchemaDict):
-    fields = {"Category":"Category", "Status":"Status"}
+@book_schema.bind("Root")
+class Root(YSchemaDict):
+    path = ()
+    field = {"Tags":"Tags", "Books":"Books"}
 
-@book_schema.bind()
-class Category(YSchemaDict):
-    pass
-
-@book_schema.bind()
+@book_schema.bind("Books")
 class Books(YSchemaList):
+    path = ('Books')
+    #"Book"
     pass
 
-@book_schema.bind()
+@book_schema.bind("Book")
 class Book(YSchemaDict):
+    path = ('Books','Book')
     field = {"isbn":str, "title":str}
 
-@book_schema.bind()
+@book_schema.bind("Tags")
+class Tags(YSchemaDict):
+    path = ('Tags',)
+    field = {"Category":"Category", "Status":"Status"}
+
+@book_schema.bind("Category")
+class Category(YSchemaDict):
+    path = ('Tags', 'Category')
+    pass
+
+@book_schema.bind("Status")
 class Status(YSchemaDict):
+    path = ('Tags', 'Status')
     field = {"notyet", "working", "read"}
 
 
@@ -74,20 +85,14 @@ class Library(object):
         return self.Tags().Category
 
     def Book(self):
-        p = self.objects.Books.path()
-        b = Book({'isbn':None, 'title':None}, p)
+        #p = self.objects.Books.path()
+        b = Book({'isbn':None, 'title':None})
         self.objects.Books.append(b)
         return b
 
-    def Tag(self, name):
-        p = self.Tags().path()
-        t = Tag({})
-        self.objects.Tags[name] = t
-        return t
-
     def Category(self, name):
-        p = self.Tags().Category.path()
-        c = Tag({}, p)
+        #p = self.Tags().Category.path()
+        c = Category({})#, p)
         self.Tags().Category[name] = c
         return c
 
