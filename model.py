@@ -33,7 +33,7 @@ class Tags(YSchemaDict):
 @book_schema.bind("Category")
 class Category(YSchemaDict):
     path = ('Tags', 'Category')
-    pass
+    field = "*"
 
 @book_schema.bind("Status")
 class Status(YSchemaDict):
@@ -59,7 +59,7 @@ class Library(object):
     []
     >>> lib.Categories()
     ['Politics', 'Engineering', 'Cooking', 'Business']
-    >>> b = lib.Book()
+    >>> b = lib.Book(None, None)
     >>> b
     ['isbn', 'title']
     """
@@ -84,15 +84,13 @@ class Library(object):
     def Categories(self):
         return self.Tags().Category
 
-    def Book(self):
-        #p = self.objects.Books.path()
-        b = Book({'isbn':None, 'title':None})
+    def Book(self, isbn, title):
+        b = Book({'isbn':isbn, 'title':title})
         self.objects.Books.append(b)
         return b
 
     def Category(self, name):
-        #p = self.Tags().Category.path()
-        c = Category({})#, p)
+        c = Category({})
         self.Tags().Category[name] = c
         return c
 

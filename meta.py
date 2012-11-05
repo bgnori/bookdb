@@ -139,9 +139,8 @@ class YSchemaDict(DictMixin, YSchemaProxy):
             raise ValidationError, "%s got %s, %s"%(self, param, self.__class__.field)
 
     def _validate_set(self, param, value):
-        pass
-        #if param not in self.__class__.field:
-        #    raise
+        if param not in self.__class__.field:
+            raise ValidationError, "%s got %s, for %s, in  %s"%(self, param, value, self.__class__.field)
 
 
 class YSchema(object):
@@ -152,8 +151,11 @@ class YSchema(object):
         Dynamic gen. of classes?
         """
 
-    def get_class(self, name):
-        return self.kls[name]
+    def get_class(self, name, default=None):
+        if default is None:
+            return self.kls[name]
+        else:
+            return self.kls.get(name, default)
 
     def wrap(self, x, owner=None, name=None):
         #print "YSchema", x
@@ -161,14 +163,14 @@ class YSchema(object):
             k = self.get_class("Root")
             return k(x)
 
-        if isinstance(x, dict):
-            assert name in owner.__class__.field
-            j = self.get_class(name)
-            return j(x)
-
-        if isinstance(x, list):
-            return YSchemaList(x)
-        return x 
+        if name in owner.__class__.field:
+            found = None
+            try:
+                found = self.get_class(name)
+            except:
+                return x
+            return found(x)
+        assert False
 
     def bind(self, as_name=None):
         def foo(kls):
@@ -176,7 +178,7 @@ class YSchema(object):
                 name = kls.__name__
             else:
                 name = as_name
-            print "binding", name, kls
+            #print "binding", name, kls
             self.kls[name] = kls
             return kls
         return foo
