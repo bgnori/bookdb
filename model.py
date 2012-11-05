@@ -38,7 +38,7 @@ class Library(object):
     >>> lib.Root()
     ['Books', 'Tags']
     >>> lib.Books()
-    YamlProxyList instance with 5 items
+    ListMixin instance with 5 items
     >>> lib.Tags()
     ['Category', 'Status']
     >>> lib.Categories()

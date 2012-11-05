@@ -18,9 +18,9 @@ def wrap(x):
     #print x["Tags"]["Category"]["Cooking"][0]["title"]
     """
     if isinstance(x, list):
-        return YamlProxyList(x)
+        return ListMixin(x)
     if isinstance(x, dict):
-        return YamlProxyDict(x)
+        return DictMixin(x)
     return x 
 
 
@@ -35,7 +35,7 @@ class YamlProxy(object):
     def wrap(self, obj):
         return wrap(obj)
 
-class YamlProxyList(YamlProxy):
+class ListMixin(YamlProxy):
     """
     >>> p = wrap(yaml.load("[0, 100, 2]"))
     >>> p[0]
@@ -61,10 +61,10 @@ class YamlProxyList(YamlProxy):
         self._objects.append(x)
 
     def __repr__(self):
-        return "YamlProxyList instance with %d items"%(len(self._objects),)
+        return "ListMixin instance with %d items"%(len(self._objects),)
 
 
-class YamlProxyDict(YamlProxy):
+class DictMixin(YamlProxy):
     """
     >>> p = wrap(yaml.load("isbn: 'this is isbn'"))
     >>> p.isbn
@@ -97,17 +97,22 @@ class YSchemaMixin(object):
     schema = None
     def wrap(self, obj):
         return self.schema.wrap(obj)
+    def path(self):
+        return self.path
 
-class YSchemaList(YamlProxyList, YSchemaMixin):
+class YSchemaList(ListMixin, YSchemaMixin):
     pass
 
-class YSchemaDict(YamlProxyDict, YSchemaMixin):
+class YSchemaDict(DictMixin, YSchemaMixin):
     pass
 
 class YSchema(object):
     def __init__(self, f):
         self.kls = {}
         YSchemaMixin.schema = self #FIXME
+        """
+        Dynamic gen. of classes?
+        """
 
     def wrap(self, x, path=None):
         #print "YSchema", x
