@@ -11,7 +11,7 @@ book_schema = YSchema(0)
 
 @book_schema.bind()
 class Tag(YSchemaDict):
-    fields = ()
+    fields = {"Category":"Category", "Status":"Status"}
 
 @book_schema.bind()
 class Category(YSchemaDict):
@@ -23,11 +23,11 @@ class Books(YSchemaList):
 
 @book_schema.bind()
 class Book(YSchemaDict):
-    fields = ("isbn", "title")
+    field = {"isbn":str, "title":str}
 
 @book_schema.bind()
 class Status(YSchemaDict):
-    pass
+    field = {"notyet", "working", "read"}
 
 
 class Library(object):
@@ -74,17 +74,20 @@ class Library(object):
         return self.Tags().Category
 
     def Book(self):
-        b = Book({'isbn':None, 'title':None})
+        p = self.objects.Books.path()
+        b = Book({'isbn':None, 'title':None}, p)
         self.objects.Books.append(b)
         return b
 
     def Tag(self, name):
+        p = self.Tags().path()
         t = Tag({})
         self.objects.Tags[name] = t
         return t
 
     def Category(self, name):
-        c = Tag({})
+        p = self.Tags().Category.path()
+        c = Tag({}, p)
         self.Tags().Category[name] = c
         return c
 

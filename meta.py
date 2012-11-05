@@ -32,8 +32,14 @@ class YamlProxy(object):
     def __repr__(self):
         return "YamlProxy instance with %s"%(self._objects,)
 
-    def wrap(self, obj):
+    def _wrap(self, obj):
         return wrap(obj)
+
+    def _validate_get(self, param):
+        pass
+    def _validate_set(self, param, value):
+        pass
+
 
 class ListMixin(object):
     """
@@ -46,9 +52,11 @@ class ListMixin(object):
     2
     """
     def __getitem__(self, nth):
-        return self.wrap(self._objects[nth])
+        self._validate_get(nth)
+        return self._wrap(self._objects[nth])
 
     def __setitem__(self, nth, value):
+        self._validate_set(nth, value)
         self._objects[nth] = value
 
     def __iter__(self):
@@ -58,6 +66,7 @@ class ListMixin(object):
         return len(self._objects)
 
     def append(self, x):
+        self._validate_set(-1, x)
         self._objects.append(x)
 
     def __repr__(self):
@@ -80,36 +89,60 @@ class DictMixin(object):
         return self._objects.keys()
 
     def __getattr__(self, name):
-        return self.wrap(self._objects.get(name))
+        self._validate_get(name)
+        return self._wrap(self._objects.get(name))
 
     def __getitem__(self, name):
-        return self.wrap(self.__dict__["_objects"][name])
+        self._validate_get(name)
+        return self._wrap(self.__dict__["_objects"][name])
 
     def __setattr__(self, name, value):
+        self._validate_set(name, value)
         self.__dict__["_objects"][name] = value
 
     def __setitem__(self, name, value):
+        self._validate_set(name, value)
         self.__dict__["_objects"][name] = value
 
     def __repr__(self):
         assert isinstance(self._objects, dict)
         return "%s"%(self.__keys__(),)
 
+
 class YamlDict(DictMixin, YamlProxy):
     pass
 
+
 class YSchemaProxy(YamlProxy):
     schema = None
-    def wrap(self, obj):
-        return self.schema.wrap(obj)
+    def __init__(self, obj, path):
+        YamlProxy.__init__(self, obj)
+        self.__dict__["_path"] = path
+
     def path(self):
-        return self.path
+        return self._path
+
+    def _wrap(self, obj):
+        return self.schema.wrap(obj, self._path)
+
+
 
 class YSchemaList(ListMixin, YSchemaProxy):
     pass
 
+
 class YSchemaDict(DictMixin, YSchemaProxy):
-    pass
+    field = ()
+    def _validate_get(self, param):
+        pass
+        #if param not in self.__class__.field:
+        #    raise
+
+    def _validate_set(self, param, value):
+        pass
+        #if param not in self.__class__.field:
+        #    raise
+
 
 class YSchema(object):
     def __init__(self, f):
@@ -126,9 +159,9 @@ class YSchema(object):
         else:
             p = path
         if isinstance(x, list):
-            return YSchemaList(x)
+            return YSchemaList(x, p)
         if isinstance(x, dict):
-            return YSchemaDict(x)
+            return YSchemaDict(x, p)
         return x 
 
     def bind(self, as_name=None):
