@@ -18,9 +18,9 @@ def wrap(x):
     #print x["Tags"]["Category"]["Cooking"][0]["title"]
     """
     if isinstance(x, list):
-        return ListMixin(x)
+        return YamlList(x)
     if isinstance(x, dict):
-        return DictMixin(x)
+        return YamlDict(x)
     return x 
 
 
@@ -35,7 +35,7 @@ class YamlProxy(object):
     def wrap(self, obj):
         return wrap(obj)
 
-class ListMixin(YamlProxy):
+class ListMixin(object):
     """
     >>> p = wrap(yaml.load("[0, 100, 2]"))
     >>> p[0]
@@ -63,8 +63,10 @@ class ListMixin(YamlProxy):
     def __repr__(self):
         return "ListMixin instance with %d items"%(len(self._objects),)
 
+class YamlList(ListMixin, YamlProxy):
+    pass
 
-class DictMixin(YamlProxy):
+class DictMixin(object):
     """
     >>> p = wrap(yaml.load("isbn: 'this is isbn'"))
     >>> p.isbn
@@ -93,23 +95,26 @@ class DictMixin(YamlProxy):
         assert isinstance(self._objects, dict)
         return "%s"%(self.__keys__(),)
 
-class YSchemaMixin(object):
+class YamlDict(DictMixin, YamlProxy):
+    pass
+
+class YSchemaProxy(YamlProxy):
     schema = None
     def wrap(self, obj):
         return self.schema.wrap(obj)
     def path(self):
         return self.path
 
-class YSchemaList(ListMixin, YSchemaMixin):
+class YSchemaList(ListMixin, YSchemaProxy):
     pass
 
-class YSchemaDict(DictMixin, YSchemaMixin):
+class YSchemaDict(DictMixin, YSchemaProxy):
     pass
 
 class YSchema(object):
     def __init__(self, f):
         self.kls = {}
-        YSchemaMixin.schema = self #FIXME
+        YSchemaProxy.schema = self #FIXME
         """
         Dynamic gen. of classes?
         """
