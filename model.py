@@ -6,7 +6,7 @@ import isbn as libisbn
 import meta
 import yaml
 
-class Yamlable(meta.YamlProxyDict):
+class Yamlable(meta.YamlProxyDict, meta.SchemaMixin):
     def __init__(self, **argv):
         kls = self.__class__
         d = dict([(k, None) for k in kls.fields])
@@ -61,7 +61,7 @@ class Library(object):
         self.objects = None
 
     def load(self, f):
-        self.objects = meta.wrap(yaml.load(f))
+        self.objects = book_schema.wrap(yaml.load(f))
 
     def save(self, f):
         pass

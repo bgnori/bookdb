@@ -32,6 +32,9 @@ class YamlProxy(object):
     def __repr__(self):
         return "YamlProxy instance with %s"%(self._objects,)
 
+    def wrap(self, obj):
+        return wrap(obj)
+
 class YamlProxyList(YamlProxy):
     """
     >>> p = wrap(yaml.load("[0, 100, 2]"))
@@ -43,7 +46,7 @@ class YamlProxyList(YamlProxy):
     2
     """
     def __getitem__(self, nth):
-        return wrap(self._objects[nth])
+        return self.wrap(self._objects[nth])
 
     def __setitem__(self, nth, value):
         self._objects[nth] = value
@@ -75,10 +78,10 @@ class YamlProxyDict(YamlProxy):
         return self._objects.keys()
 
     def __getattr__(self, name):
-        return wrap(self._objects.get(name))
+        return self.wrap(self._objects.get(name))
 
     def __getitem__(self, name):
-        return wrap(self.__dict__["_objects"][name])
+        return self.wrap(self.__dict__["_objects"][name])
 
     def __setattr__(self, name, value):
         self.__dict__["_objects"][name] = value
@@ -90,9 +93,29 @@ class YamlProxyDict(YamlProxy):
         assert isinstance(self._objects, dict)
         return "%s"%(self.__keys__(),)
 
+
+class SchemaMixin(object):
+    schema = None
+    def wrap(self, obj):
+        return self.schema.wrap(obj)
+
+
 class YSchema(object):
     def __init__(self, f):
-        pass
+        self.kls = {}
+        SchemaMixin.schema = self #FIXME
+
+    def wrap(self, x, path=None):
+        if path is None:
+            p = "/"
+        else:
+            p = path
+        if isinstance(x, list):
+            return YamlProxyList(x)
+        if isinstance(x, dict):
+            return YamlProxyDict(x)
+        return x 
+
     def bind(self, as_name=None):
         def foo(kls):
             if as_name is None:
@@ -100,6 +123,7 @@ class YSchema(object):
             else:
                 name = as_name
             print "binding", name, kls
+            self.kls[name] = kls
             return kls
         return foo
 
@@ -114,3 +138,4 @@ class Validator(object):
 
     """
     pass
+
