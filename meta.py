@@ -93,27 +93,32 @@ class YamlProxyDict(YamlProxy):
         assert isinstance(self._objects, dict)
         return "%s"%(self.__keys__(),)
 
-
-class SchemaMixin(object):
+class YSchemaMixin(object):
     schema = None
     def wrap(self, obj):
         return self.schema.wrap(obj)
 
+class YSchemaList(YamlProxyList, YSchemaMixin):
+    pass
+
+class YSchemaDict(YamlProxyDict, YSchemaMixin):
+    pass
 
 class YSchema(object):
     def __init__(self, f):
         self.kls = {}
-        SchemaMixin.schema = self #FIXME
+        YSchemaMixin.schema = self #FIXME
 
     def wrap(self, x, path=None):
+        #print "YSchema", x
         if path is None:
             p = "/"
         else:
             p = path
         if isinstance(x, list):
-            return YamlProxyList(x)
+            return YSchemaList(x)
         if isinstance(x, dict):
-            return YamlProxyDict(x)
+            return YSchemaDict(x)
         return x 
 
     def bind(self, as_name=None):

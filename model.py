@@ -3,36 +3,31 @@
 
 
 import isbn as libisbn
-import meta
+from meta import YSchemaDict, YSchemaList, YSchema
 import yaml
 
-class Yamlable(meta.YamlProxyDict, meta.SchemaMixin):
-    def __init__(self, **argv):
-        kls = self.__class__
-        d = dict([(k, None) for k in kls.fields])
-        d.update(argv)
-        meta.YamlProxyDict.__init__(self, d)
-        self.test()
-    def test(self):
-        assert isinstance(self._objects, dict)
 
-book_schema = meta.YSchema(0)
+book_schema = YSchema(0)
 
 @book_schema.bind()
-class Tag(Yamlable):
+class Tag(YSchemaDict):
     fields = ()
 
 @book_schema.bind()
-class Category(Tag):
+class Category(YSchemaDict):
     pass
 
 @book_schema.bind()
-class Books(meta.YamlProxyList):
+class Books(YSchemaList):
     pass
 
 @book_schema.bind()
-class Book(Yamlable):
+class Book(YSchemaDict):
     fields = ("isbn", "title")
+
+@book_schema.bind()
+class Status(YSchemaDict):
+    pass
 
 
 class Library(object):
@@ -79,17 +74,17 @@ class Library(object):
         return self.Tags().Category
 
     def Book(self):
-        b = Book()
+        b = Book({'isbn':None, 'title':None})
         self.objects.Books.append(b)
         return b
 
     def Tag(self, name):
-        t = Tag()
+        t = Tag({})
         self.objects.Tags[name] = t
         return t
 
     def Category(self, name):
-        c = Tag()
+        c = Tag({})
         self.Tags().Category[name] = c
         return c
 
