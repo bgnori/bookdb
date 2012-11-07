@@ -11,33 +11,31 @@ book_schema = YSchema(0)
 
 @book_schema.bind("Root")
 class Root(YSchemaDict):
-    path = ()
     field = {"Tags":"Tags", "Books":"Books"}
 
 @book_schema.bind("Books")
 class Books(YSchemaList):
-    path = ('Books')
     #"Book"
     pass
 
 @book_schema.bind("Book")
 class Book(YSchemaDict):
-    path = ('Books','Book')
     field = {"isbn":str, "title":str}
 
 @book_schema.bind("Tags")
 class Tags(YSchemaDict):
-    path = ('Tags',)
     field = {"Category":"Category", "Status":"Status"}
 
 @book_schema.bind("Category")
-class Category(YSchemaDict):
-    path = ('Tags', 'Category')
-    field = "*"
+class Category(YSchemaList):
+    array = [str, 'Categories']
+
+@book_schema.bind("Categories")
+class Category(YSchemaList):
+    array = ['(Categories)|(Book)']
 
 @book_schema.bind("Status")
 class Status(YSchemaDict):
-    path = ('Tags', 'Status')
     field = {"notyet", "working", "read"}
 
 
@@ -67,7 +65,7 @@ class Library(object):
         self.objects = None
 
     def load(self, f):
-        self.objects = book_schema.wrap(yaml.load(f))
+        self.objects = book_schema.wrap_as_root(yaml.load(f))
 
     def save(self, f):
         pass

@@ -4,6 +4,9 @@
 
 import yaml
 
+class ValidationError(Exception):
+    pass
+
 def wrap(x):
     u"""
     Todo: Schema support
@@ -114,21 +117,26 @@ class YamlDict(DictMixin, YamlProxy):
 
 
 class YSchemaProxy(YamlProxy):
-    schema = None
+    scheme = None
+    field = None
     def __init__(self, obj):
         YamlProxy.__init__(self, obj)
 
     def _wrap(self, obj, name):
-        return self.schema.wrap(obj, self, name)
+        kname = self.field.get(name, None)
+        if kname is None:
+            kname = self.field.get("*", None)
+            if kname is None:
+                raise ValidationError 
 
+        k = self.schema.get_class(kname)
+        return k(obj)
 
 
 class YSchemaList(ListMixin, YSchemaProxy):
     pass
 
 
-class ValidationError(Exception):
-    pass
 
 class YSchemaDict(DictMixin, YSchemaProxy):
     field = ()
@@ -157,20 +165,9 @@ class YSchema(object):
         else:
             return self.kls.get(name, default)
 
-    def wrap(self, x, owner=None, name=None):
-        #print "YSchema", x
-        if owner is None:
-            k = self.get_class("Root")
-            return k(x)
-
-        if name in owner.__class__.field:
-            found = None
-            try:
-                found = self.get_class(name)
-            except:
-                return x
-            return found(x)
-        assert False
+    def wrap_as_root(self, x):
+        k = self.get_class("Root")
+        return k(x)
 
     def bind(self, as_name=None):
         def foo(kls):
