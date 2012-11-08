@@ -15,39 +15,28 @@ Books:
   - &id004
     isbn: "400339481X"
     title: "サイバネティックス: 動物と機械における制御と通信"
-  - &id005:
+  - &id005
     isbn: "4822283100"
     title: "セキュリティはなぜやぶられたのか"
 
-Tags:
-  Category:
-    - 
-      name: Cooking
-      Books: [*id001]
-      SubCategory: []
-    - 
-      name: Business
-      Books: [*id002]
-      SubCategory: []
-    - 
-      name: Engineering
-      Books: []
-      SubCategory:
-        - 
-          name: Control
-          Books: [*id004]
-          SubCategory: []
-        -
-          name: Software
-          Books: [*id003]
-          SubCategory: []
-  Status:
-    notyet:
-      - *id003
-      - *id004
-    working:
-      - *id002
-    done:
-      - *id001
-      - *id005
-
+Categories:
+  - 
+    name: Cooking
+    Books: [*id001]
+    SubCategory: []
+  - 
+    name: Business
+    Books: [*id002]
+    SubCategory: []
+  - 
+    name: Engineering
+    Books: []
+    SubCategory:
+      - 
+        name: Control
+        Books: [*id004]
+        SubCategory: []
+      -
+        name: Software
+        Books: [*id003]
+        SubCategory: []
