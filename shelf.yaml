@@ -3,13 +3,13 @@ name: archive #or shelf
 desc: book data base
 type: map #Root
 mapping:
-  "Books":
+  "Books": 
     type: seq
     required: yes
-    sequence:
-      - 
-        type: map #Book
-        mapping: &book
+    sequence: &Books
+      - &Book
+        type: map 
+        mapping: 
           "isbn":
             type: str
             required: yes
@@ -17,50 +17,16 @@ mapping:
           "title":
             type: str
             required: yes
-          "tags":
-            type: seq 
-            sequence:
-              - 
-                *notyet
-              - 
-                *working
-              - 
-                *done
-          =:
-            type: any
-  "Tags":
-    type: map
-    required: yes
-    mapping:
-      "Category": &category
-        type: seq
-        sequence:
-          - &categoryname
-            type: str
-          - &Categoryentries
-            type: seq
-            sequence:
-              - 
-                *category
-              - 
-                *book
-      "Status":
+  "Categories": &Categories
+    type: seq
+    sequence:
+      - &Category
         type: map
         mapping:
-          "notyet": &notyet
-            type: seq
-            sequence:
-              - 
-                *book
-          "working": &working
-            type: seq
-            sequence:
-              - 
-                *book
-          "done": &done
-            type: seq
-            sequence:
-              - 
-                *book
-          =:
-            type: any
+          name: 
+            type: str
+            required: yes
+          Books:
+            *Books
+          SubCategory:
+            *Categories
