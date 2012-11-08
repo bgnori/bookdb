@@ -131,10 +131,12 @@ class YSchemaList(ListMixin, YSchemaProxy):
     hometype = None
     #FIXME should have wrapper/wrappee pair
     def _wrap(self, obj, nth):
-        return self.hometype(obj)
+        k = self.schema.get_class(self.hometype)
+        return k(obj)
 
     def _validate_set(self, param, value):
-        assert isinstance(value, (self.hometype))
+        k = self.schema.get_class(self.hometype)
+        assert isinstance(value, k)
 
 class YSchemaDict(DictMixin, YSchemaProxy):
     field = ()

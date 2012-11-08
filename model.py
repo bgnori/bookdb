@@ -9,25 +9,17 @@ import yaml
 
 book_schema = YSchema(0)
 
-@book_schema.bind("Root")
-class Root(YSchemaDict):
-    field = {"Tags":"Tags", "Books":"Books"}
-
 
 @book_schema.bind("Book")
 class Book(YSchemaDict):
     field = {"isbn":str, "title":str}
 
+
 @book_schema.bind("Books")
 class Books(YSchemaList):
-    hometype = Book
+    hometype = "Book"
     def _validate_set(self, param, value):
         assert isinstance(value, Book)
-
-
-@book_schema.bind("Tags")
-class Tags(YSchemaDict):
-    field = {"Category":"Categories", "Status":"Status"}
 
 
 @book_schema.bind("Category")
@@ -37,12 +29,23 @@ class Category(YSchemaDict):
 
 @book_schema.bind("Categories")
 class Categories(YSchemaList):
-    hometype = Category
+    hometype = "Category"
 
 
 @book_schema.bind("Status")
 class Status(YSchemaDict):
     field = {"notyet", "working", "read"}
+
+
+@book_schema.bind("Tags")
+class Tags(YSchemaDict):
+    field = {"Category":"Categories", "Status":"Status"}
+
+
+@book_schema.bind("Root")
+class Root(YSchemaDict):
+    field = {"Tags":"Tags", "Books":"Books"}
+
 
 
 class Library(object):
