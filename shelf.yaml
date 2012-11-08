@@ -23,7 +23,9 @@ mapping:
             type: seq
             sequence: 
               - 
-                type: int #tag id
+                #type: int #tag id
+                type: str #tagpath
+                pattern: /([/]\w)+/
           =: 
             type: any
 
@@ -37,6 +39,10 @@ mapping:
             required: yes
             type: int
             unique: yes
+          created: 
+            required: yes
+            #type: int #unix epoch
+            type: date #unix epoch
           name: 
             required: yes
             type: str
@@ -45,8 +51,11 @@ mapping:
             type: seq
             sequence: 
               *Books
-          SubTags:
+          Tags:
             required: yes
             type: seq
             sequence: 
               *Tags
+          =: 
+            type: any
+
