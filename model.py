@@ -13,26 +13,32 @@ book_schema = YSchema(0)
 class Root(YSchemaDict):
     field = {"Tags":"Tags", "Books":"Books"}
 
-@book_schema.bind("Books")
-class Books(YSchemaList):
-    #"Book"
-    pass
 
 @book_schema.bind("Book")
 class Book(YSchemaDict):
     field = {"isbn":str, "title":str}
 
+@book_schema.bind("Books")
+class Books(YSchemaList):
+    hometype = Book
+    def _validate_set(self, param, value):
+        assert isinstance(value, Book)
+
+
 @book_schema.bind("Tags")
 class Tags(YSchemaDict):
-    field = {"Category":"Category", "Status":"Status"}
+    field = {"Category":"Categories", "Status":"Status"}
+
 
 @book_schema.bind("Category")
-class Category(YSchemaList):
-    array = [str, 'Categories']
+class Category(YSchemaDict):
+    field = {"name":str, "Books":"Books", "SubCategory":"Categories"}
+
 
 @book_schema.bind("Categories")
-class Category(YSchemaList):
-    array = ['(Categories)|(Book)']
+class Categories(YSchemaList):
+    hometype = Category
+
 
 @book_schema.bind("Status")
 class Status(YSchemaDict):
@@ -89,7 +95,7 @@ class Library(object):
 
     def Category(self, name):
         c = Category({})
-        self.Tags().Category[name] = c
+        self.Tags().Category.append(c)
         return c
 
     def path(self, p):

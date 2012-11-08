@@ -33,9 +33,17 @@ mapping:
     required: yes
     mapping:
       "Category": &category
-        type: map
-        mapping:
-          *category
+        type: seq
+        sequence:
+          - &categoryname
+            type: str
+          - &Categoryentries
+            type: seq
+            sequence:
+              - 
+                *category
+              - 
+                *book
       "Status":
         type: map
         mapping:

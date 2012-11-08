@@ -21,15 +21,26 @@ Books:
 
 Tags:
   Category:
-    Cooking:
-      - *id001
-    Business:
-      - *id002
-    Engineering:
-      Control:
-        - *id004
-      Software:
-        - *id003
+    - 
+      name: Cooking
+      Books: [*id001]
+      SubCategory: []
+    - 
+      name: Business
+      Books: [*id002]
+      SubCategory: []
+    - 
+      name: Engineering
+      Books: []
+      SubCategory:
+        - 
+          name: Control
+          Books: [*id004]
+          SubCategory: []
+        -
+          name: Software
+          Books: [*id003]
+          SubCategory: []
   Status:
     notyet:
       - *id003

@@ -73,7 +73,11 @@ class ListMixin(object):
         self._objects.append(x)
 
     def __repr__(self):
-        return "ListMixin instance with %d items"%(len(self._objects),)
+        if len(self) > 5:
+            return "ListMixin instance with %d items"%(len(self._objects),)
+
+        s = ','.join([repr(self._wrap(obj, i)) for i, obj in enumerate(self._objects)])
+        return '[' +  s + ']'
 
 class YamlList(ListMixin, YamlProxy):
     pass
@@ -109,7 +113,10 @@ class DictMixin(object):
 
     def __repr__(self):
         assert isinstance(self._objects, dict)
-        return "%s"%(self.__keys__(),)
+        n = getattr(self._objects, "name", None)
+        if n is None:
+            return "%s"%(self.__keys__(),)
+        return n
 
 
 class YamlDict(DictMixin, YamlProxy):
@@ -117,11 +124,20 @@ class YamlDict(DictMixin, YamlProxy):
 
 
 class YSchemaProxy(YamlProxy):
-    scheme = None
-    field = None
     def __init__(self, obj):
         YamlProxy.__init__(self, obj)
 
+class YSchemaList(ListMixin, YSchemaProxy):
+    hometype = None
+    #FIXME should have wrapper/wrappee pair
+    def _wrap(self, obj, nth):
+        return self.hometype(obj)
+
+    def _validate_set(self, param, value):
+        assert isinstance(value, (self.hometype))
+
+class YSchemaDict(DictMixin, YSchemaProxy):
+    field = ()
     def _wrap(self, obj, name):
         kname = self.field.get(name, None)
         if kname is None:
@@ -132,14 +148,6 @@ class YSchemaProxy(YamlProxy):
         k = self.schema.get_class(kname)
         return k(obj)
 
-
-class YSchemaList(ListMixin, YSchemaProxy):
-    pass
-
-
-
-class YSchemaDict(DictMixin, YSchemaProxy):
-    field = ()
     def _validate_get(self, param):
         if param not in self.__class__.field:
             print param
