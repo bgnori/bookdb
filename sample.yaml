@@ -1,14 +1,14 @@
-
-
 Books:
   - &id001
     isbn: "4873115094"
     title: "Cooking for Geeks: 料理の科学と実践レシピ"
-    google_url: "http://books.google.co.jp/books?id=b9LOygAACAAJ&hl=ja"
+    properties:
+      google_url: "http://books.google.co.jp/books?id=b9LOygAACAAJ&hl=ja"
   - &id002
     isbn: "4004313198"
     title: "渋沢栄一: 社会企業家の先駆者"
-    google_url: "http://books.google.co.jp/books?id=dJnqXwAACAAJ&hl=ja"
+    properties:
+      google_url: "http://books.google.co.jp/books?id=dJnqXwAACAAJ&hl=ja"
   - &id003
     isbn: "482228395X"
     title: "継続的インテグレーション入門: 開発プロセスを自動化する47の作法"
@@ -18,6 +18,7 @@ Books:
   - &id005
     isbn: "4822283100"
     title: "セキュリティはなぜやぶられたのか"
+
 
 Categories:
   - 

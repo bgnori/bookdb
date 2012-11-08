@@ -3,10 +3,10 @@ name: archive #or shelf
 desc: book data base
 type: map #Root
 mapping:
-  "Books": &Books
+  "Books": 
     type: seq
     required: yes
-    sequence: 
+    sequence: &Books
       - &Book
         type: map 
         mapping: 
@@ -14,15 +14,19 @@ mapping:
             type: str
             required: yes
             unique: yes
+            pattern: /[0-9-]*/
           "title":
             type: str
             required: yes
-          "google_url":
-            type: str
+          "properties":
+            type: map
+            mapping:
+              =: 
+                type: any
 
-  "Categories": &Categories
+  "Categories": 
     type: seq
-    sequence:
+    sequence: &Categories
       - &Category
         type: map
         mapping:
@@ -33,11 +37,9 @@ mapping:
             required: yes
             type: seq
             sequence: 
-              - *Book
+              *Books
           SubCategory:
             required: yes
             type: seq
             sequence: 
-              - *Category
-          memo:
-            type: str
+              *Categories
