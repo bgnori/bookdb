@@ -1,0 +1,3 @@
+[submodule "ext/rx"]
+	path = ext/rx
+	url = https://github.com/rjbs/rx.git
