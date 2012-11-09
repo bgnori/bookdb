@@ -3,7 +3,7 @@ Books:
     type: Book
     isbn: "4873115094"
     title: "Cooking for Geeks: 料理の科学と実践レシピ"
-    tags: ["/Cooking"]
+    tags: ["/Category/Cooking"]
     google_url: "http:--books.google.co.jp-books?id=b9LOygAACAAJ&hl=ja"
   - &id002
     type: Book
@@ -33,34 +33,55 @@ Tags:
     type: Tag
     id: 0
     created: 2012-10-10
-    name: Cooking
-    Books: [*id001]
-    Tags: []
-  - 
-    type: Tag
-    id: 1
-    created: 2012-10-10
-    name: Business
-    Books: [*id002]
-    Tags: []
-  - 
-    type: Tag
-    id: 2
-    created: 2012-10-10
-    name: Engineering
+    name: Status
     Books: []
     Tags:
       - 
         type: Tag
-        id: 3
+        id: 0
         created: 2012-10-10
-        name: Control
-        Books: [*id004]
+        name: Cooking
+        Books: [*id001]
         Tags: []
-      -
+  - 
+    type: Tag
+    id: 1
+    created: 2012-10-10
+    name: Category
+    Books: []
+    Tags:
+      - 
         type: Tag
-        id: 4
+        id: 11
         created: 2012-10-10
-        name: Software
-        Books: [*id003]
+        name: Cooking
+        Books: [*id001]
         Tags: []
+      - 
+        type: Tag
+        id: 12
+        created: 2012-10-10
+        name: Business
+        Books: [*id002]
+        Tags: []
+      - 
+        type: Tag
+        id: 13
+        created: 2012-10-10
+        name: Engineering
+        Books: []
+        Tags:
+          - 
+            type: Tag
+            id: 131
+            created: 2012-10-10
+            name: Control
+            Books: [*id004]
+            Tags: []
+          -
+            type: Tag
+            id: 132
+            created: 2012-10-10
+            name: Software
+            Books: [*id003]
+            Tags: []
