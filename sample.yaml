@@ -1,23 +1,28 @@
 Books:
-  - &id001
+  - &id001 
+    type: Book
     isbn: "4873115094"
     title: "Cooking for Geeks: 料理の科学と実践レシピ"
     tags: ["/Cooking"]
     google_url: "http:--books.google.co.jp-books?id=b9LOygAACAAJ&hl=ja"
   - &id002
+    type: Book
     isbn: "4004313198"
     title: "渋沢栄一: 社会企業家の先駆者"
     tags: []
     google_url: "http:--books.google.co.jp-books?id=dJnqXwAACAAJ&hl=ja"
   - &id003
+    type: Book
     isbn: "482228395X"
     title: "継続的インテグレーション入門: 開発プロセスを自動化する47の作法"
     tags: []
   - &id004
+    type: Book
     isbn: "400339481X"
     title: "サイバネティックス: 動物と機械における制御と通信"
     tags: []
   - &id005
+    type: Book
     isbn: "4822283100"
     title: "セキュリティはなぜやぶられたのか"
     tags: []
@@ -25,30 +30,35 @@ Books:
 
 Tags:
   - 
+    type: Tag
     id: 0
     created: 2012-10-10
     name: Cooking
     Books: [*id001]
     Tags: []
   - 
+    type: Tag
     id: 1
     created: 2012-10-10
     name: Business
     Books: [*id002]
     Tags: []
   - 
+    type: Tag
     id: 2
     created: 2012-10-10
     name: Engineering
     Books: []
     Tags:
       - 
+        type: Tag
         id: 3
         created: 2012-10-10
         name: Control
         Books: [*id004]
         Tags: []
       -
+        type: Tag
         id: 4
         created: 2012-10-10
         name: Software

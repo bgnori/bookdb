@@ -10,6 +10,10 @@ mapping:
       - &Book
         type: map 
         mapping: 
+          "type":
+            type: str
+            required: yes
+            pattern: /Book/
           "isbn":
             type: str
             required: yes
@@ -41,8 +45,7 @@ mapping:
             unique: yes
           created: 
             required: yes
-            #type: int #unix epoch
-            type: date #unix epoch
+            type: date # iso8601 etc
           name: 
             required: yes
             type: str
