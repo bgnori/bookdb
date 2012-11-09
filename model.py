@@ -22,14 +22,14 @@ class Books(YSchemaList):
         assert isinstance(value, Book)
 
 
-@book_schema.bind("Category")
+@book_schema.bind("Tag")
 class Category(YSchemaDict):
-    field = {"name":str, "Books":"Books", "SubCategory":"Categories"}
+    field = {"name":str, "Books":"Books", "SubTag":"Tags"}
 
 
-@book_schema.bind("Categories")
+@book_schema.bind("Tags")
 class Categories(YSchemaList):
-    hometype = "Category"
+    hometype = "Tag"
 
 
 @book_schema.bind("Status")
@@ -88,18 +88,10 @@ class Library(object):
     def Tags(self):
         return self.objects.Tags
 
-    def Categories(self):
-        return self.Tags().Category
-
     def Book(self, isbn, title):
         b = Book({'isbn':isbn, 'title':title})
         self.objects.Books.append(b)
         return b
-
-    def Category(self, name):
-        c = Category({})
-        self.Tags().Category.append(c)
-        return c
 
     def path(self, p):
         """
