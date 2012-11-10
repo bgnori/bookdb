@@ -1,0 +1,14 @@
+
+--- 
+type: //rec
+required:
+  from: //str
+  to  : 
+    type  : //arr
+    length: { min: 1 }
+    contents: { type: //str }
+  subj: //str
+  body: //str
+optional:
+  user: /example.com/account
+
