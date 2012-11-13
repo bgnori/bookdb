@@ -50,16 +50,6 @@ from yaml import YAMLObject, Loader, Dumper
 import yaml
 
 
-class Books(YAMLObject):
-    yaml_loader = Loader
-    yaml_dumper = Dumper
-    tag = u'Books'
-    @classmethod
-    def from_yaml(cls, loader, node):
-        #print "Books::from_yaml"
-        print type(node.value)
-        return [""]
-
 class Book(YAMLObject):
     yaml_loader = Loader
     yaml_dumper = Dumper
@@ -76,10 +66,28 @@ class Book(YAMLObject):
         # ...
         return node
 
-#yaml.add_constructor("Books", Books.from_yaml)
-#yaml.add_path_resolver(u"Books", [u"Books"], list)
 yaml.add_constructor("Book", Book.from_yaml)
-yaml.add_path_resolver(u"Book", ["list", None, ], dict)
+yaml.add_path_resolver(u"Book", [u"Books", None, ], dict)
+
+
+class Tag(YAMLObject):
+    yaml_loader = Loader
+    yaml_dumper = Dumper
+    tag = u'Tag'
+
+    @classmethod
+    def from_yaml(cls, loader, node):
+        d = dict([(a.value, b.value) for a, b in node.value])
+        print d["name"]
+        return d
+
+    @classmethod
+    def to_yaml(cls, dumper, data):
+        # ...
+        return node
+
+yaml.add_constructor("Tag", Tag.from_yaml)
+yaml.add_path_resolver(u"Tag", [u"Tags", None, ], dict)
 
 with file("sample.yaml") as f:
   y = yaml.load(f.read())
