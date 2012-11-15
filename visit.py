@@ -9,6 +9,8 @@ class Visitor(object):
         'null':lambda x : None,
         'int': int,
         'str': str,
+        'bool': bool,
+        'value': str, #FIXME
         }
 
     def __init__(self, loader):
@@ -18,6 +20,7 @@ class Visitor(object):
 
     def handleScalarNode(self, sn):
         rest, tail = sn.tag.rsplit(':', 1)
+        print sn
         n = self.mapping[tail](sn.value)
         self.history[sn] = n
         return n

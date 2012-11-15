@@ -9,8 +9,11 @@ class ValidationError(Exception):
     pass
 
 
-class BookVisitor(visit.Visitor):
+class MetaVisitor(visit.Visitor):
     pass
 
-visit.inject(BookVisitor)
+visit.inject(MetaVisitor)
+# visit.inject(BookVisitor)
+with file("kw-schema.yaml") as f:
+    print yaml.load(f.read())
 

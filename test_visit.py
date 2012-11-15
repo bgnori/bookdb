@@ -21,6 +21,26 @@ class TestVisitor(unittest.TestCase):
     def testStr2(self):
         self.assertEqual(yaml.load('""'), '')
 
+    def testBoolTrue(self):
+        self.assertIsInstance(yaml.load('True'), bool)
+        self.assertEqual(yaml.load('True'), True)
+
+    def testBooltrue(self):
+        self.assertIsInstance(yaml.load('true'), bool)
+        self.assertEqual(yaml.load('true'), True)
+
+    def testBoolFalse(self):
+        self.assertIsInstance(yaml.load('False'), bool)
+        self.assertEqual(yaml.load('False'), False)
+
+    def testBoolfalse(self):
+        self.assertIsInstance(yaml.load('false'), bool)
+        self.assertEqual(yaml.load('false'), False)
+
+    def testValue(self):
+        y = yaml.load('=: foo')
+        self.assertIn("=", y)
+
     def testNone(self):
         self.assertIsNone(yaml.load(''))
 
