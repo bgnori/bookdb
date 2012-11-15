@@ -16,6 +16,7 @@ class Visitor(object):
     def __init__(self, loader):
         self.loader = loader
         self.history = {}
+        self.cwp = [] #current working path
 
 
     def handleScalarNode(self, sn):
@@ -41,20 +42,24 @@ class Visitor(object):
         return n
 
     def visit(self, node):
+        self.cwp.append(node.__class__)
+        print self.cwp
         try:
-            return self.history[node]
+            n = self.history[node]
         except:
             pass
 
         if isinstance(node, yaml.nodes.ScalarNode):
-            return self.handleScalarNode(node)
+            n = self.handleScalarNode(node)
         elif isinstance(node, yaml.nodes.MappingNode):
-            return self.handleMappingNode(node)
+            n = self.handleMappingNode(node)
         elif isinstance(node, yaml.nodes.SequenceNode):
-            return self.handleSequenceNode(node)
+            n = self.handleSequenceNode(node)
         else:
             print "Unknown node", node.__class__
-        assert False
+            assert False
+        self.cwp.pop(-1)
+        return n
 
 
 def inject(vclass):
