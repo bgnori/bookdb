@@ -9,7 +9,6 @@ class TestVisitor(unittest.TestCase):
     def setUp(self):
         visit.inject(visit.Visitor)
 
-    @unittest.skip("not ready for this")
     def testRecursive(self):
         y = yaml.load('''&A [*A] ''')
 
