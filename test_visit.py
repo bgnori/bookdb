@@ -80,7 +80,3 @@ class TestVisitor(unittest.TestCase):
         y = yaml.load('''&A {foo: *A} ''')
         self.assertEqual(y['foo'], y)
 
-if False:
-    with file("sample.yaml") as f:
-        y = yaml.load(f.read())
-
