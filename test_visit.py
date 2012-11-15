@@ -9,9 +9,6 @@ class TestVisitor(unittest.TestCase):
     def setUp(self):
         visit.inject(visit.Visitor)
 
-    def testRecursive(self):
-        y = yaml.load('''&A [*A] ''')
-
     def testInt(self):
         self.assertEqual(yaml.load('1'), 1)
 
@@ -37,13 +34,33 @@ class TestVisitor(unittest.TestCase):
     def testTwoItemList(self):
         self.assertEqual(yaml.load('[0, "a"]'), [0, 'a'])
 
+    def testEmptyDict(self):
+        self.assertEqual(yaml.load('{}'), {})
+
+    def testOneItemDict(self):
+        self.assertEqual(yaml.load('{"one":1 }'), {'one':1})
+
+    def testTwoItemDict(self):
+        self.assertEqual(yaml.load("""
+        one: 1
+        2: "two"
+        """), {'one':1, 2:"two"})
+
+    def testDictInList(self):
+        self.assertEqual(yaml.load('[{}]'), [{}])
+
+    def testListInDict(self):
+        self.assertEqual(yaml.load('{foo: []}'), {"foo": []})
+
+    def testRecursiveList(self):
+        y = yaml.load('''&A [*A] ''')
+        self.assertEqual(y[0], y)
+
+    def testRecursiveDict(self):
+        y = yaml.load('''&A {foo: *A} ''')
+        self.assertEqual(y['foo'], y)
+
 if False:
     with file("sample.yaml") as f:
         y = yaml.load(f.read())
 
-if False:
-    y = yaml.load('''
-        key-foo: 'value-foo'
-        key-bar: 'value-bar'
-        array: [1, 2, 3]''')
-    print y
