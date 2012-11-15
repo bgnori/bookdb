@@ -123,3 +123,22 @@ questions are:
     How to map regular objects into list+str+int combination? => Proxy
 
 Should write sample yamls first.
+
+
+We have yaml samples now.
+ * time to validate it with schema
+   * Rx: too hard to understand.
+   * Kwalify. 
+
+We have schema (kw-schema.py)
+ * Yes. It is valid.
+
+Customizing loader.
+ * pyyaml add_constructor and add_path_resolver are not 
+  flexible enough.
+ * visit.py, overtaking visitor.
+   * defining path is "duplicated" with schema
+   * why not load schema?
+     * Does that mean defining python class in yaml?
+
+
