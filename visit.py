@@ -21,7 +21,6 @@ class Visitor(object):
 
     def handleScalarNode(self, sn):
         rest, tail = sn.tag.rsplit(':', 1)
-        print sn
         n = self.mapping[tail](sn.value)
         self.history[sn] = n
         return n
@@ -41,23 +40,23 @@ class Visitor(object):
             for k, v in vs])
         return n
 
+    def _visit(self, node):
+       if isinstance(node, yaml.nodes.ScalarNode):
+           return self.handleScalarNode(node)
+       elif isinstance(node, yaml.nodes.MappingNode):
+           return self.handleMappingNode(node)
+       elif isinstance(node, yaml.nodes.SequenceNode):
+           return self.handleSequenceNode(node)
+       else:
+           print "Unknown node", node.__class__
+           assert False
+
     def visit(self, node):
         self.cwp.append(node.__class__)
-        print self.cwp
         try:
             n = self.history[node]
         except:
-            pass
-
-        if isinstance(node, yaml.nodes.ScalarNode):
-            n = self.handleScalarNode(node)
-        elif isinstance(node, yaml.nodes.MappingNode):
-            n = self.handleMappingNode(node)
-        elif isinstance(node, yaml.nodes.SequenceNode):
-            n = self.handleSequenceNode(node)
-        else:
-            print "Unknown node", node.__class__
-            assert False
+            n = self._visit(node)
         self.cwp.pop(-1)
         return n
 
