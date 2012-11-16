@@ -51,13 +51,23 @@ class Visitor(object):
            print "Unknown node", node.__class__
            assert False
 
+    def push(self, node):
+        self.cwp.append(node)
+
+    def pop(self, node):
+        p = self.cwp.pop(-1)
+        assert node == p
+
+    def getcwp(self):
+        return self.cwp
+
     def visit(self, node):
-        self.cwp.append(node.__class__)
+        self.push(node)
         try:
             n = self.history[node]
         except:
             n = self._visit(node)
-        self.cwp.pop(-1)
+        self.pop(node)
         return n
 
 
