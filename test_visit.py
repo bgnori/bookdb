@@ -81,7 +81,7 @@ class TestVisitor(unittest.TestCase):
         self.assertEqual(y['foo'], y)
 
 
-class TestYPath(unittest.TestCase):
+class TestYPathBasic(unittest.TestCase):
     def setUp(self):
         visit.inject(visit.Visitor)
         self.y = yaml.load('''
@@ -122,4 +122,27 @@ class TestYPath(unittest.TestCase):
     def testNameAfterIndex(self):
         x = visit.ypath("/2/second", self.z)
         self.assertEqual(self.z[2]["second"], x)
+
+
+class TestYPathCond(unittest.TestCase):
+    def setUp(self):
+        visit.inject(visit.Visitor)
+        self.y = yaml.load('''
+            a: 1
+            b: 2
+            c: {x: 3, y: 4}
+            d: {x: 5, y: 6}
+            e: {x: 3, y: 6}
+        ''')
+
+    def testValueEq1(self):
+        xs = visit.ypath("//.[x=3", self.y)
+        self.assertIn(self.y["c"], xs)
+        self.assertIn(self.y["e"], xs)
+
+    def testValueEq2(self):
+        xs = visit.ypath("//.[y=6", self.y)
+        self.assertIn(self.y["d"], xs)
+        self.assertIn(self.y["e"], xs)
+
 
