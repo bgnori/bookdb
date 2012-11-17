@@ -88,6 +88,7 @@ def inject(vclass):
     # yaml.add_path_resolver(u"Root", [], None)
 
 def ypath(path, node):
+    '[]'
     xs = path.split("/")
     
     n = node

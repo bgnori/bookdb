@@ -89,6 +89,11 @@ class TestYPath(unittest.TestCase):
             b: 2
             c: [3, 4]
         ''')
+        self.z = yaml.load('''
+            - 0
+            - one
+            - { first: 3, second: 4}
+        ''')
 
     def testRoot(self):
         root = visit.ypath("/", self.y)
@@ -106,4 +111,15 @@ class TestYPath(unittest.TestCase):
         x = visit.ypath("/c/0", self.y)
         self.assertEqual(self.y["c"][0], x)
 
+    def testSingleIndex1(self):
+        x = visit.ypath("/0", self.z)
+        self.assertEqual(self.z[0], x)
+
+    def testSingleIndex2(self):
+        x = visit.ypath("/1", self.z)
+        self.assertEqual(self.z[1], x)
+
+    def testNameAfterIndex(self):
+        x = visit.ypath("/2/second", self.z)
+        self.assertEqual(self.z[2]["second"], x)
 
