@@ -96,31 +96,31 @@ class TestYPathBasic(unittest.TestCase):
         ''')
 
     def testRoot(self):
-        root = visit.ypath("/", self.y)
+        root = visit.find("/", self.y)
         self.assertEqual(self.y, root)
 
     def testSingleName1(self):
-        x = visit.ypath("/a", self.y)
+        x = visit.find("/a", self.y)
         self.assertEqual(self.y["a"], x)
 
     def testSingleName2(self):
-        x = visit.ypath("/b", self.y)
+        x = visit.find("/b", self.y)
         self.assertEqual(self.y["b"], x)
 
     def testIndexAfterName(self):
-        x = visit.ypath("/c/0", self.y)
+        x = visit.find("/c/0", self.y)
         self.assertEqual(self.y["c"][0], x)
 
     def testSingleIndex1(self):
-        x = visit.ypath("/0", self.z)
+        x = visit.find("/0", self.z)
         self.assertEqual(self.z[0], x)
 
     def testSingleIndex2(self):
-        x = visit.ypath("/1", self.z)
+        x = visit.find("/1", self.z)
         self.assertEqual(self.z[1], x)
 
     def testNameAfterIndex(self):
-        x = visit.ypath("/2/second", self.z)
+        x = visit.find("/2/second", self.z)
         self.assertEqual(self.z[2]["second"], x)
 
 
@@ -136,12 +136,12 @@ class TestYPathCond(unittest.TestCase):
         ''')
 
     def testValueEq1(self):
-        xs = visit.ypath("//.[x=3", self.y)
+        xs = visit.find("//.[x=3", self.y)
         self.assertIn(self.y["c"], xs)
         self.assertIn(self.y["e"], xs)
 
     def testValueEq2(self):
-        xs = visit.ypath("//.[y=6", self.y)
+        xs = visit.find("//.[y=6", self.y)
         self.assertIn(self.y["d"], xs)
         self.assertIn(self.y["e"], xs)
 
