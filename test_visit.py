@@ -136,13 +136,24 @@ class TestYPathCond(unittest.TestCase):
         ''')
 
     def testValueEq1(self):
-        xs = visit.find("//.[x=3", self.y)
+        xs = visit.find("//.[x=3]", self.y)
         self.assertIn(self.y["c"], xs)
         self.assertIn(self.y["e"], xs)
 
     def testValueEq2(self):
-        xs = visit.find("//.[y=6", self.y)
+        xs = visit.find("//.[y=6]", self.y)
         self.assertIn(self.y["d"], xs)
         self.assertIn(self.y["e"], xs)
+
+class TestYPathParse(unittest.TestCase):
+    def testNone(self):
+        path, node, cond = visit.yparse("")
+        self.assertIsNone(path)
+        self.assertIsNone(node)
+        self.assertIsNone(cond)
+
+    def testRoot(self):
+        path, node, cond = visit.yparse("/")
+
 
 
