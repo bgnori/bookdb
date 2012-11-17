@@ -80,3 +80,30 @@ class TestVisitor(unittest.TestCase):
         y = yaml.load('''&A {foo: *A} ''')
         self.assertEqual(y['foo'], y)
 
+
+class TestYPath(unittest.TestCase):
+    def setUp(self):
+        visit.inject(visit.Visitor)
+        self.y = yaml.load('''
+            a: 1
+            b: 2
+            c: [3, 4]
+        ''')
+
+    def testRoot(self):
+        root = visit.ypath("/", self.y)
+        self.assertEqual(self.y, root)
+
+    def testSingleName1(self):
+        x = visit.ypath("/a", self.y)
+        self.assertEqual(self.y["a"], x)
+
+    def testSingleName2(self):
+        x = visit.ypath("/b", self.y)
+        self.assertEqual(self.y["b"], x)
+
+    def testIndexAfterName(self):
+        x = visit.ypath("/c/0", self.y)
+        self.assertEqual(self.y["c"][0], x)
+
+
