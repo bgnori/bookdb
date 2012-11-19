@@ -1,3 +1,6 @@
 [submodule "ext/rx"]
 	path = ext/rx
 	url = https://github.com/rjbs/rx.git
+[submodule "ext/ypath-spec"]
+	path = ext/ypath-spec
+	url = https://github.com/peterkmurphy/YPath-Specification.git
